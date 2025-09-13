@@ -16,8 +16,8 @@ import { useEpisodes } from '@/hooks/useEpisodes';
 import type { DateRange } from 'react-day-picker';
 
 const Analytics = () => {
-  const [selectedServiceId, setSelectedServiceId] = useState<string>('');
-  const [selectedEpisode, setSelectedEpisode] = useState<string>('');
+  const [selectedServiceId, setSelectedServiceId] = useState<string>('all');
+  const [selectedEpisode, setSelectedEpisode] = useState<string>('all');
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [excludeBots, setExcludeBots] = useState(true);
 
@@ -25,8 +25,8 @@ const Analytics = () => {
   const { data: episodes = [] } = useEpisodes(selectedServiceId);
   
   const analyticsFilters = useMemo(() => ({
-    serviceId: selectedServiceId || undefined,
-    epNo: selectedEpisode ? parseInt(selectedEpisode) : undefined,
+    serviceId: selectedServiceId === 'all' ? undefined : selectedServiceId,
+    epNo: selectedEpisode === 'all' ? undefined : parseInt(selectedEpisode),
     startDate: dateRange?.from?.toISOString(),
     endDate: dateRange?.to?.toISOString(),
     excludeBots,
@@ -135,7 +135,7 @@ const Analytics = () => {
                     <SelectValue placeholder="すべてのサービス" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">すべてのサービス</SelectItem>
+                    <SelectItem value="all">すべてのサービス</SelectItem>
                     {services.map((service) => (
                       <SelectItem key={service.id} value={service.id}>
                         {service.name}
@@ -152,7 +152,7 @@ const Analytics = () => {
                     <SelectValue placeholder="すべてのエピソード" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">すべてのエピソード</SelectItem>
+                    <SelectItem value="all">すべてのエピソード</SelectItem>
                     {episodes.map((episode) => (
                       <SelectItem key={episode.id} value={episode.ep_no.toString()}>
                         #{episode.ep_no} {episode.title && `- ${episode.title}`}
