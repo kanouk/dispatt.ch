@@ -32,13 +32,7 @@ const Admin = () => {
           <Button asChild>
             <Link to="/services">
               <Settings className="h-4 w-4 mr-2" />
-              サービス設定へ
-            </Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link to="/episodes">
-              <Play className="h-4 w-4 mr-2" />
-              エピソード管理へ
+              サービス・エピソード管理へ
             </Link>
           </Button>
           <Button asChild variant="outline">
@@ -138,7 +132,7 @@ const Admin = () => {
                     <Badge variant="secondary">DRAFT</Badge>
                   </div>
                   <Button variant="outline" size="sm" asChild>
-                    <Link to={`/episodes?service=${episode.service_id}`}>
+                    <Link to={`/services?service=${episode.service_id}`}>
                       編集
                     </Link>
                   </Button>
