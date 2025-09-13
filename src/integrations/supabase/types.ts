@@ -164,6 +164,7 @@ export type Database = {
           note_home_url: string | null
           slug: string
           spotify_show_url: string | null
+          tiktok_profile_url: string | null
           updated_at: string
           user_id: string
           youtube_channel_url: string | null
@@ -177,6 +178,7 @@ export type Database = {
           note_home_url?: string | null
           slug: string
           spotify_show_url?: string | null
+          tiktok_profile_url?: string | null
           updated_at?: string
           user_id: string
           youtube_channel_url?: string | null
@@ -190,6 +192,7 @@ export type Database = {
           note_home_url?: string | null
           slug?: string
           spotify_show_url?: string | null
+          tiktok_profile_url?: string | null
           updated_at?: string
           user_id?: string
           youtube_channel_url?: string | null

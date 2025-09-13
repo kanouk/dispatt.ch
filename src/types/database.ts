@@ -11,6 +11,7 @@ export interface Service {
   youtube_channel_url?: string;
   spotify_show_url?: string;
   instagram_profile_url?: string;
+  tiktok_profile_url?: string;
   user_id: string;
   created_at: string;
   updated_at: string;
