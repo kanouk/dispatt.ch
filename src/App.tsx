@@ -9,6 +9,8 @@ import Logout from "./pages/Logout";
 import AuthCallback from "./pages/AuthCallback";
 import Admin from "./pages/Admin";
 import Services from "./pages/Services";
+import Episodes from "./pages/Episodes";
+import Analytics from "./pages/Analytics";
 import Forbidden from "./pages/Forbidden";
 import Health from "./pages/Health";
 import NotFound from "./pages/NotFound";
@@ -41,6 +43,22 @@ const App = () => (
             element={
               <ProtectedRoute requireAdmin>
                 <Services />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/episodes" 
+            element={
+              <ProtectedRoute requireAdmin>
+                <Episodes />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/analytics" 
+            element={
+              <ProtectedRoute requireAdmin>
+                <Analytics />
               </ProtectedRoute>
             } 
           />
