@@ -182,6 +182,7 @@ const Services = () => {
     YOUTUBE: 'YouTube',
     SPOTIFY: 'Spotify',
     INSTAGRAM: 'Instagram',
+    TIKTOK: 'TikTok',
     CUSTOM: 'Custom'
   };
 
@@ -249,7 +250,10 @@ const Services = () => {
               
               <div>
                 <Label htmlFor="default_platform">既定プラットフォーム</Label>
-                <Select onValueChange={(value) => setValue('default_platform', value as AppPlatform)}>
+                <Select 
+                  value={watch('default_platform')} 
+                  onValueChange={(value) => setValue('default_platform', value as AppPlatform)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="プラットフォームを選択" />
                   </SelectTrigger>
@@ -314,6 +318,19 @@ const Services = () => {
                         }
                       })}
                       placeholder="https://instagram.com/user"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="tiktok_profile_url">TikTok URL</Label>
+                    <Input 
+                      id="tiktok_profile_url"
+                      {...register("tiktok_profile_url", {
+                        pattern: {
+                          value: /^https:\/\/.+/,
+                          message: "https://で始まる正しいURLを入力してください"
+                        }
+                      })}
+                      placeholder="https://tiktok.com/@user"
                     />
                   </div>
                 </div>

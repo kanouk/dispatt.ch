@@ -1,4 +1,4 @@
-export type AppPlatform = 'NOTE' | 'YOUTUBE' | 'SPOTIFY' | 'INSTAGRAM' | 'CUSTOM';
+export type AppPlatform = 'NOTE' | 'YOUTUBE' | 'SPOTIFY' | 'INSTAGRAM' | 'TIKTOK' | 'CUSTOM';
 export type FallbackBehavior = 'COMING_SOON' | 'FALLBACK_TO_CHANNEL';
 export type EpisodeStatus = 'DRAFT' | 'LIVE' | 'ARCHIVED';
 

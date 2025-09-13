@@ -204,7 +204,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      app_platform: "NOTE" | "YOUTUBE" | "SPOTIFY" | "INSTAGRAM" | "CUSTOM"
+      app_platform:
+        | "NOTE"
+        | "YOUTUBE"
+        | "SPOTIFY"
+        | "INSTAGRAM"
+        | "CUSTOM"
+        | "TIKTOK"
       episode_status: "DRAFT" | "LIVE" | "ARCHIVED"
       fallback_behavior: "COMING_SOON" | "FALLBACK_TO_CHANNEL"
     }
@@ -334,7 +340,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_platform: ["NOTE", "YOUTUBE", "SPOTIFY", "INSTAGRAM", "CUSTOM"],
+      app_platform: [
+        "NOTE",
+        "YOUTUBE",
+        "SPOTIFY",
+        "INSTAGRAM",
+        "CUSTOM",
+        "TIKTOK",
+      ],
       episode_status: ["DRAFT", "LIVE", "ARCHIVED"],
       fallback_behavior: ["COMING_SOON", "FALLBACK_TO_CHANNEL"],
     },
