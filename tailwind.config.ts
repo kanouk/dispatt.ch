@@ -87,5 +87,8 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("daisyui")],
+  daisyui: {
+    themes: ["light"], // Single theme to prevent CSS bloat
+  },
 } satisfies Config;
