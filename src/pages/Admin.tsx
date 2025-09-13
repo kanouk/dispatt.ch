@@ -1,65 +1,142 @@
-import { Navbar } from '@/components/Navbar';
-import { Sidebar } from '@/components/Sidebar';
-import { useAuth } from '@/hooks/useAuth';
+import { Navbar } from "@/components/Navbar";
+import { Sidebar } from "@/components/Sidebar";
+import { useServices } from "@/hooks/useServices";
+import { useEpisodes } from "@/hooks/useEpisodes";
+import { useAnalyticsSummary } from "@/hooks/useAnalytics";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { BarChart, Users, ExternalLink, Calendar } from "lucide-react";
 
 const Admin = () => {
-  const { user } = useAuth();
+  const { data: services } = useServices();
+  const { data: episodes } = useEpisodes();
+  const { data: analytics } = useAnalyticsSummary({ 
+    startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    excludeBots: true 
+  });
+
+  // Get upcoming episodes (status DRAFT)
+  const upcomingEpisodes = episodes?.filter(ep => ep.status === 'DRAFT').slice(0, 5) || [];
 
   return (
-    <div className="drawer lg:drawer-open">
+    <div className="drawer">
       <input id="drawer-toggle" type="checkbox" className="drawer-toggle" />
-      
       <div className="drawer-content flex flex-col">
         <Navbar />
         
-        <main className="flex-1 p-6 bg-base-100">
+        <main className="flex-1 p-6">
           <div className="max-w-7xl mx-auto">
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold">ダッシュボード</h1>
-              <p className="text-base-content/70 mt-2">
-                ようこそ、{user?.email}さん
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold mb-2">ダッシュボード</h1>
+              <p className="text-muted-foreground">
+                短縮URL管理システムの概要とKPI
               </p>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="stat bg-base-200 rounded-box">
-                <div className="stat-figure text-primary">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                </div>
-                <div className="stat-title">総ユーザー数</div>
-                <div className="stat-value text-primary">1</div>
-                <div className="stat-desc">管理者のみ</div>
-              </div>
+
+            {/* KPI Cards */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    直近7日の総クリック
+                  </CardTitle>
+                  <BarChart className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{analytics?.totalClicks || 0}</div>
+                  <p className="text-xs text-muted-foreground">
+                    過去7日間の合計
+                  </p>
+                </CardContent>
+              </Card>
               
-              <div className="stat bg-base-200 rounded-box">
-                <div className="stat-figure text-secondary">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                <div className="stat-title">システム状態</div>
-                <div className="stat-value text-secondary">正常</div>
-                <div className="stat-desc">全システム稼働中</div>
-              </div>
-              
-              <div className="stat bg-base-200 rounded-box">
-                <div className="stat-figure text-accent">
-                  <div className="avatar online">
-                    <div className="w-16 rounded-full">
-                      <img src={user?.user_metadata?.avatar_url || '/placeholder.svg'} alt="Avatar" />
-                    </div>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    推定ユニークユーザー
+                  </CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{analytics?.uniqueClicks || 0}</div>
+                  <p className="text-xs text-muted-foreground">
+                    過去7日間の推定値
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    登録サービス
+                  </CardTitle>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{services?.length || 0}</div>
+                  <p className="text-xs text-muted-foreground">
+                    設定済みサービス数
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    総エピソード
+                  </CardTitle>
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{episodes?.length || 0}</div>
+                  <p className="text-xs text-muted-foreground">
+                    全エピソード数
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Upcoming Episodes */}
+            <Card>
+              <CardHeader>
+                <CardTitle>近日公開エピソード</CardTitle>
+                <CardDescription>
+                  公開準備中のエピソード一覧（上位5件）
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {upcomingEpisodes.length > 0 ? (
+                  <div className="space-y-4">
+                    {upcomingEpisodes.map((episode: any) => (
+                      <div key={episode.id} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <div>
+                            <p className="font-medium">
+                              {episode.services?.name} - EP{episode.ep_no}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {episode.title || '（タイトル未設定）'}
+                            </p>
+                          </div>
+                          <Badge variant="secondary">DRAFT</Badge>
+                        </div>
+                        <Button variant="outline" size="sm" asChild>
+                          <Link to={`/admin/episodes?service=${episode.service_id}`}>
+                            編集
+                          </Link>
+                        </Button>
+                      </div>
+                    ))}
                   </div>
-                </div>
-                <div className="stat-value">オンライン</div>
-                <div className="stat-title">管理者状態</div>
-                <div className="stat-desc text-accent">アクティブ</div>
-              </div>
-            </div>
-            
-            <div className="mt-8">
-              <div className="alert alert-info">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span>これは管理者向けダッシュボードの骨格です。必要な機能を追加してください。</span>
-              </div>
-            </div>
+                ) : (
+                  <p className="text-muted-foreground text-center py-8">
+                    公開準備中のエピソードはありません
+                  </p>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </main>
       </div>

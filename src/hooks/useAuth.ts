@@ -45,10 +45,15 @@ export const useAuth = () => {
     return { error };
   };
 
-  const isAdmin = () => {
+  const isAdmin = async () => {
     if (!user?.email) return false;
-    const adminEmails = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
-    return adminEmails.includes(user.email);
+    try {
+      const { data } = await supabase.rpc('is_admin');
+      return data === true;
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      return false;
+    }
   };
 
   return {

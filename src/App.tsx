@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Logout from "./pages/Logout";
 import AuthCallback from "./pages/AuthCallback";
 import Admin from "./pages/Admin";
+import Services from "./pages/Services";
 import Forbidden from "./pages/Forbidden";
 import Health from "./pages/Health";
 import NotFound from "./pages/NotFound";
@@ -32,6 +33,14 @@ const App = () => (
             element={
               <ProtectedRoute requireAdmin>
                 <Admin />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/services" 
+            element={
+              <ProtectedRoute requireAdmin>
+                <Services />
               </ProtectedRoute>
             } 
           />
