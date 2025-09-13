@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Menu } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 export const Navbar = () => {
@@ -13,6 +14,9 @@ export const Navbar = () => {
   return (
     <div className="navbar bg-base-200 shadow-lg">
       <div className="flex-1">
+        <label htmlFor="drawer-toggle" className="btn btn-ghost lg:hidden mr-2">
+          <Menu className="w-5 h-5" />
+        </label>
         <a className="btn btn-ghost normal-case text-xl" onClick={() => navigate('/admin')}>
           Dispatt Admin
         </a>

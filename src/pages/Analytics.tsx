@@ -1,6 +1,6 @@
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { useState, useMemo } from 'react';
 import { CalendarDays, Download, TrendingUp, Users, MousePointer, Bot } from 'lucide-react';
-import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -115,14 +115,11 @@ const Analytics = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">分析</h1>
-          <p className="text-muted-foreground">クリック数や参照元などの分析データを確認できます</p>
-        </div>
+    <AdminLayout>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">分析</h1>
+        <p className="text-muted-foreground">クリック数や参照元などの分析データを確認できます</p>
+      </div>
 
         {/* Filters */}
         <Card className="mb-8">
@@ -373,8 +370,7 @@ const Analytics = () => {
             </Table>
           </CardContent>
         </Card>
-      </main>
-    </div>
+    </AdminLayout>
   );
 };
 

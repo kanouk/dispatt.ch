@@ -1,6 +1,6 @@
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { useState, useMemo } from 'react';
 import { Plus, Search, Edit, Trash2, ExternalLink, Copy } from 'lucide-react';
-import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -115,14 +115,11 @@ const Episodes = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">エピソード管理</h1>
-          <p className="text-muted-foreground">サービスのエピソードを管理します</p>
-        </div>
+    <AdminLayout>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">エピソード管理</h1>
+        <p className="text-muted-foreground">サービスのエピソードを管理します</p>
+      </div>
 
         <div className="mb-6 flex flex-col sm:flex-row gap-4">
           <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
@@ -293,10 +290,9 @@ const Episodes = () => {
                 onCancel={() => setEditingEpisode(null)}
               />
             </DialogContent>
-          </Dialog>
-        )}
-      </main>
-    </div>
+        </Dialog>
+      )}
+    </AdminLayout>
   );
 };
 

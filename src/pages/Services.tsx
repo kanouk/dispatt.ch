@@ -1,6 +1,5 @@
+import { AdminLayout } from "@/components/layout/AdminLayout";
 import { useState } from "react";
-import { Navbar } from "@/components/Navbar";
-import { Sidebar } from "@/components/Sidebar";
 import { useServices, useCreateService, useUpdateService, useDeleteService } from "@/hooks/useServices";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -92,20 +91,14 @@ const Services = () => {
   }
 
   return (
-    <div className="drawer">
-      <input id="drawer-toggle" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col">
-        <Navbar />
-        
-        <main className="flex-1 p-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
-              <div>
-                <h1 className="text-3xl font-bold mb-2">サービス設定</h1>
-                <p className="text-muted-foreground">
-                  短縮URL用のサービス（ポッドキャスト等）を管理
-                </p>
-              </div>
+    <AdminLayout>
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">サービス設定</h1>
+          <p className="text-muted-foreground">
+            短縮URL用のサービス（ポッドキャスト等）を管理
+          </p>
+        </div>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button>
@@ -284,12 +277,7 @@ const Services = () => {
                 </Card>
               )}
             </div>
-          </div>
-        </main>
-      </div>
-      
-      <Sidebar />
-    </div>
+    </AdminLayout>
   );
 };
 
