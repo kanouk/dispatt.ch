@@ -25,14 +25,13 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/admin" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/forbidden" element={<Forbidden />} />
           <Route path="/health" element={<Health />} />
           <Route 
-            path="/admin" 
+            path="/" 
             element={
               <ProtectedRoute>
                 <Admin />
@@ -40,7 +39,7 @@ const App = () => (
             } 
           />
           <Route 
-            path="/admin/services" 
+            path="/services" 
             element={
               <ProtectedRoute>
                 <Services />
@@ -48,7 +47,7 @@ const App = () => (
             } 
           />
           <Route 
-            path="/admin/episodes" 
+            path="/episodes" 
             element={
               <ProtectedRoute>
                 <Episodes />
@@ -56,7 +55,7 @@ const App = () => (
             } 
           />
           <Route 
-            path="/admin/analytics" 
+            path="/analytics" 
             element={
               <ProtectedRoute>
                 <Analytics />

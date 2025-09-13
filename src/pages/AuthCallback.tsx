@@ -27,7 +27,7 @@ const AuthCallback = () => {
             title: "ログイン成功",
             description: "ダッシュボードへリダイレクトします",
           });
-          navigate('/admin');
+          navigate('/');
         } else {
           navigate('/login');
         }

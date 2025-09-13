@@ -5,10 +5,10 @@ export const Sidebar = () => {
   const location = useLocation();
 
   const menuItems = [
-    { path: '/admin', label: 'ダッシュボード', icon: '🏠' },
-    { path: '/admin/services', label: 'サービス設定', icon: '⚙️' },
-    { path: '/admin/episodes', label: 'エピソード管理', icon: '📺' },
-    { path: '/admin/analytics', label: '分析', icon: '📊' },
+    { path: '/', label: 'ダッシュボード', icon: '🏠' },
+    { path: '/services', label: 'サービス設定', icon: '⚙️' },
+    { path: '/episodes', label: 'エピソード管理', icon: '📺' },
+    { path: '/analytics', label: '分析', icon: '📊' },
     { path: '/health', label: 'ヘルスチェック', icon: '⚡' },
   ];
 

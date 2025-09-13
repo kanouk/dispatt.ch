@@ -30,19 +30,19 @@ const Admin = () => {
         {/* Quick Actions */}
         <div className="flex gap-3 mt-4">
           <Button asChild>
-            <Link to="/admin/services">
+            <Link to="/services">
               <Settings className="h-4 w-4 mr-2" />
               サービス設定へ
             </Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/admin/episodes">
+            <Link to="/episodes">
               <Play className="h-4 w-4 mr-2" />
               エピソード管理へ
             </Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/admin/analytics">
+            <Link to="/analytics">
               <TrendingUp className="h-4 w-4 mr-2" />
               分析へ
             </Link>
@@ -138,7 +138,7 @@ const Admin = () => {
                     <Badge variant="secondary">DRAFT</Badge>
                   </div>
                   <Button variant="outline" size="sm" asChild>
-                    <Link to={`/admin/episodes?service=${episode.service_id}`}>
+                    <Link to={`/episodes?service=${episode.service_id}`}>
                       編集
                     </Link>
                   </Button>

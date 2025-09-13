@@ -17,7 +17,7 @@ export const Navbar = () => {
         <label htmlFor="drawer-toggle" className="btn btn-ghost lg:hidden mr-2">
           <Menu className="w-5 h-5" />
         </label>
-        <a className="btn btn-ghost normal-case text-xl" onClick={() => navigate('/admin')}>
+        <a className="btn btn-ghost normal-case text-xl" onClick={() => navigate('/')}>
           Dispatt Admin
         </a>
       </div>

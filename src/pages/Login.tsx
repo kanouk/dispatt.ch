@@ -9,7 +9,7 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      navigate('/admin');
+      navigate('/');
     }
   }, [user, navigate]);
 
