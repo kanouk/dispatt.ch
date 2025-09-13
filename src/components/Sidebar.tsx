@@ -6,7 +6,7 @@ export const Sidebar = () => {
 
   const menuItems = [
     { path: '/', label: 'ダッシュボード', icon: '🏠' },
-    { path: '/services', label: 'サービス・エピソード', icon: '⚙️' },
+    { path: '/services', label: 'サービス・エピソード', icon: '🎬' },
     { path: '/analytics', label: '分析', icon: '📊' },
     { path: '/health', label: 'ヘルスチェック', icon: '⚡' },
   ];
@@ -14,9 +14,9 @@ export const Sidebar = () => {
   return (
     <div className="drawer-side">
       <label htmlFor="drawer-toggle" className="drawer-overlay"></label>
-      <aside className="w-64 min-h-full bg-base-200">
+      <aside className="w-64 min-h-full bg-card border-r">
         <div className="p-4">
-          <h2 className="text-xl font-bold mb-4">メニュー</h2>
+          <h2 className="text-xl font-bold mb-4 text-primary">📋 メニュー</h2>
           <ul className="menu">
             {menuItems.map((item) => (
               <li key={item.path}>

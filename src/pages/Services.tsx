@@ -178,12 +178,12 @@ const Services = () => {
   };
 
   const platformLabels = {
-    NOTE: 'Note',
-    YOUTUBE: 'YouTube',
-    SPOTIFY: 'Spotify',
-    INSTAGRAM: 'Instagram',
-    TIKTOK: 'TikTok',
-    CUSTOM: 'Custom'
+    NOTE: '📝 Note',
+    YOUTUBE: '📺 YouTube',
+    SPOTIFY: '🎵 Spotify',
+    INSTAGRAM: '📸 Instagram',
+    TIKTOK: '🎬 TikTok',
+    CUSTOM: '🔧 Custom'
   };
 
   if (isLoading) {
@@ -198,16 +198,16 @@ const Services = () => {
     <AdminLayout>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">サービス・エピソード管理</h1>
+          <h1 className="text-3xl font-bold mb-2 text-primary">🎬 サービス・エピソード管理</h1>
           <p className="text-muted-foreground">
-            短縮URL用のサービスとエピソードを管理
+            ✨ 短縮URL用のサービスとエピソードを管理
           </p>
         </div>
         <Dialog open={isServiceDialogOpen} onOpenChange={setIsServiceDialogOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70">
               <Plus className="h-4 w-4 mr-2" />
-              新規サービス
+              ✨ 新規サービス
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
@@ -391,10 +391,11 @@ const Services = () => {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {service.note_home_url && <Badge variant="secondary">Note <Check className="h-3 w-3 ml-1" /></Badge>}
-                {service.youtube_channel_url && <Badge variant="secondary">YouTube <Check className="h-3 w-3 ml-1" /></Badge>}
-                {service.spotify_show_url && <Badge variant="secondary">Spotify <Check className="h-3 w-3 ml-1" /></Badge>}
-                {service.instagram_profile_url && <Badge variant="secondary">Instagram <Check className="h-3 w-3 ml-1" /></Badge>}
+                {service.note_home_url && <Badge variant="secondary" className="bg-blue-100 text-blue-800">📝 Note <Check className="h-3 w-3 ml-1" /></Badge>}
+                {service.youtube_channel_url && <Badge variant="secondary" className="bg-red-100 text-red-800">📺 YouTube <Check className="h-3 w-3 ml-1" /></Badge>}
+                {service.spotify_show_url && <Badge variant="secondary" className="bg-green-100 text-green-800">🎵 Spotify <Check className="h-3 w-3 ml-1" /></Badge>}
+                {service.instagram_profile_url && <Badge variant="secondary" className="bg-pink-100 text-pink-800">📸 Instagram <Check className="h-3 w-3 ml-1" /></Badge>}
+                {service.tiktok_profile_url && <Badge variant="secondary" className="bg-purple-100 text-purple-800">🎬 TikTok <Check className="h-3 w-3 ml-1" /></Badge>}
               </div>
             </CardContent>
           </Card>
@@ -416,9 +417,9 @@ const Services = () => {
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-2xl font-bold">エピソード管理</h2>
+              <h2 className="text-2xl font-bold text-accent">🎯 エピソード管理</h2>
               <p className="text-muted-foreground">
-                「{selectedService?.name}」のエピソードを管理
+                ✨ 「{selectedService?.name}」のエピソードを管理
               </p>
             </div>
           </div>
@@ -436,9 +437,9 @@ const Services = () => {
 
             <Dialog open={isEpisodeDialogOpen} onOpenChange={setIsEpisodeDialogOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70">
                   <Plus className="h-4 w-4 mr-2" />
-                  エピソード作成
+                  🎬 エピソード作成
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
