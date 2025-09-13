@@ -14,16 +14,208 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      allowed_admins: {
+        Row: {
+          created_at: string
+          email: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+        }
+        Relationships: []
+      }
+      clicks: {
+        Row: {
+          created_at: string
+          ep_no: number | null
+          episode_id: string | null
+          host: string | null
+          id: string
+          ip_hash: string | null
+          is_bot: boolean
+          path: string | null
+          referer_domain: string | null
+          referrer: string | null
+          service_id: string
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          variant: string
+        }
+        Insert: {
+          created_at?: string
+          ep_no?: number | null
+          episode_id?: string | null
+          host?: string | null
+          id?: string
+          ip_hash?: string | null
+          is_bot?: boolean
+          path?: string | null
+          referer_domain?: string | null
+          referrer?: string | null
+          service_id: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          variant: string
+        }
+        Update: {
+          created_at?: string
+          ep_no?: number | null
+          episode_id?: string | null
+          host?: string | null
+          id?: string
+          ip_hash?: string | null
+          is_bot?: boolean
+          path?: string | null
+          referer_domain?: string | null
+          referrer?: string | null
+          service_id?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          variant?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clicks_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clicks_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      episodes: {
+        Row: {
+          created_at: string
+          custom_url: string | null
+          default_platform: Database["public"]["Enums"]["app_platform"]
+          ep_no: number
+          fallback_behavior: Database["public"]["Enums"]["fallback_behavior"]
+          id: string
+          instagram_url: string | null
+          note_url: string | null
+          published_at: string | null
+          service_id: string
+          spotify_url: string | null
+          status: Database["public"]["Enums"]["episode_status"]
+          title: string | null
+          updated_at: string
+          youtube_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          custom_url?: string | null
+          default_platform: Database["public"]["Enums"]["app_platform"]
+          ep_no: number
+          fallback_behavior?: Database["public"]["Enums"]["fallback_behavior"]
+          id?: string
+          instagram_url?: string | null
+          note_url?: string | null
+          published_at?: string | null
+          service_id: string
+          spotify_url?: string | null
+          status?: Database["public"]["Enums"]["episode_status"]
+          title?: string | null
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          custom_url?: string | null
+          default_platform?: Database["public"]["Enums"]["app_platform"]
+          ep_no?: number
+          fallback_behavior?: Database["public"]["Enums"]["fallback_behavior"]
+          id?: string
+          instagram_url?: string | null
+          note_url?: string | null
+          published_at?: string | null
+          service_id?: string
+          spotify_url?: string | null
+          status?: Database["public"]["Enums"]["episode_status"]
+          title?: string | null
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "episodes_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          created_at: string
+          default_platform: Database["public"]["Enums"]["app_platform"]
+          id: string
+          instagram_profile_url: string | null
+          name: string
+          note_home_url: string | null
+          slug: string
+          spotify_show_url: string | null
+          updated_at: string
+          youtube_channel_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          default_platform: Database["public"]["Enums"]["app_platform"]
+          id?: string
+          instagram_profile_url?: string | null
+          name: string
+          note_home_url?: string | null
+          slug: string
+          spotify_show_url?: string | null
+          updated_at?: string
+          youtube_channel_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          default_platform?: Database["public"]["Enums"]["app_platform"]
+          id?: string
+          instagram_profile_url?: string | null
+          name?: string
+          note_home_url?: string | null
+          slug?: string
+          spotify_show_url?: string | null
+          updated_at?: string
+          youtube_channel_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_platform: "NOTE" | "YOUTUBE" | "SPOTIFY" | "INSTAGRAM" | "CUSTOM"
+      episode_status: "DRAFT" | "LIVE" | "ARCHIVED"
+      fallback_behavior: "COMING_SOON" | "FALLBACK_TO_CHANNEL"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +342,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_platform: ["NOTE", "YOUTUBE", "SPOTIFY", "INSTAGRAM", "CUSTOM"],
+      episode_status: ["DRAFT", "LIVE", "ARCHIVED"],
+      fallback_behavior: ["COMING_SOON", "FALLBACK_TO_CHANNEL"],
+    },
   },
 } as const
