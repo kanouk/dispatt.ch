@@ -39,16 +39,34 @@ export const useCreateEpisode = () => {
   
   return useMutation({
     mutationFn: async (episode: Omit<Episode, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
+      // 空文字列をnullに正規化
+      const normalizedEpisode = {
+        ...episode,
+        title: episode.title?.trim() || null,
+        note_url: episode.note_url?.trim() || null,
+        youtube_url: episode.youtube_url?.trim() || null,
+        spotify_url: episode.spotify_url?.trim() || null,
+        instagram_url: episode.instagram_url?.trim() || null,
+        custom_url: episode.custom_url?.trim() || null,
+        user_id: (await supabase.auth.getUser()).data.user?.id
+      };
+      
       const { data, error } = await supabase
         .from('episodes')
-        .insert({
-          ...episode,
-          user_id: (await supabase.auth.getUser()).data.user?.id
-        })
+        .insert(normalizedEpisode)
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        // カスタムエラーメッセージ
+        if (error.code === '23505' && error.message.includes('episodes_service_id_ep_no_key')) {
+          throw new Error('このエピソード番号は既に存在します');
+        }
+        if (error.message.includes('valid_custom_url')) {
+          throw new Error('カスタムURL形式が正しくありません');
+        }
+        throw error;
+      }
       return data as Episode;
     },
     onSuccess: () => {
@@ -62,14 +80,34 @@ export const useUpdateEpisode = () => {
   
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Episode> & { id: string }) => {
+      // 空文字列をnullに正規化
+      const normalizedUpdates = {
+        ...updates,
+        title: updates.title?.trim() || null,
+        note_url: updates.note_url?.trim() || null,
+        youtube_url: updates.youtube_url?.trim() || null,
+        spotify_url: updates.spotify_url?.trim() || null,
+        instagram_url: updates.instagram_url?.trim() || null,
+        custom_url: updates.custom_url?.trim() || null,
+      };
+      
       const { data, error } = await supabase
         .from('episodes')
-        .update(updates)
+        .update(normalizedUpdates)
         .eq('id', id)
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        // カスタムエラーメッセージ
+        if (error.code === '23505' && error.message.includes('episodes_service_id_ep_no_key')) {
+          throw new Error('このエピソード番号は既に存在します');
+        }
+        if (error.message.includes('valid_custom_url')) {
+          throw new Error('カスタムURL形式が正しくありません');
+        }
+        throw error;
+      }
       return data as Episode;
     },
     onSuccess: () => {

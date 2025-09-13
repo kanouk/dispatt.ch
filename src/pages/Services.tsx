@@ -125,10 +125,10 @@ const Services = () => {
         title: "エピソード作成完了",
         description: "エピソードが正常に作成されました。",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "エラー",
-        description: "エピソードの作成に失敗しました。",
+        description: error.message || "エピソードの作成に失敗しました。",
         variant: "destructive",
       });
     }
@@ -142,10 +142,10 @@ const Services = () => {
         title: "エピソード更新完了",
         description: "エピソードが正常に更新されました。",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "エラー",
-        description: "エピソードの更新に失敗しました。",
+        description: error.message || "エピソードの更新に失敗しました。",
         variant: "destructive",
       });
     }
@@ -574,6 +574,7 @@ interface EpisodeFormProps {
 }
 
 const EpisodeForm = ({ service, episode, onSubmit, onCancel }: EpisodeFormProps) => {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     ep_no: episode?.ep_no || 1,
     title: episode?.title || '',
@@ -590,9 +591,26 @@ const EpisodeForm = ({ service, episode, onSubmit, onCancel }: EpisodeFormProps)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // 空文字列のpublished_atをnullに変換
+    
+    // カスタムURLのバリデーション
+    if (formData.default_platform === 'CUSTOM' && !formData.custom_url.trim()) {
+      toast({
+        title: "エラー",
+        description: "デフォルトプラットフォームがカスタムの場合、カスタムURLは必須です",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // 空文字列をnullに変換
     const cleanedData = {
       ...formData,
+      title: formData.title.trim() || null,
+      note_url: formData.note_url.trim() || null,
+      youtube_url: formData.youtube_url.trim() || null,
+      spotify_url: formData.spotify_url.trim() || null,
+      instagram_url: formData.instagram_url.trim() || null,
+      custom_url: formData.custom_url.trim() || null,
       published_at: formData.published_at === '' ? null : formData.published_at
     };
     onSubmit(cleanedData);
@@ -716,7 +734,7 @@ const EpisodeForm = ({ service, episode, onSubmit, onCancel }: EpisodeFormProps)
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="FALLBACK_TO_CHANNEL">チャンネルトップへ</SelectItem>
-            <SelectItem value="NOT_FOUND">404エラー</SelectItem>
+            <SelectItem value="COMING_SOON">カミングスーン</SelectItem>
           </SelectContent>
         </Select>
       </div>
