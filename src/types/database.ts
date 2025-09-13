@@ -11,6 +11,7 @@ export interface Service {
   youtube_channel_url?: string;
   spotify_show_url?: string;
   instagram_profile_url?: string;
+  user_id: string;
   created_at: string;
   updated_at: string;
 }
@@ -29,6 +30,7 @@ export interface Episode {
   fallback_behavior: FallbackBehavior;
   status: EpisodeStatus;
   published_at?: string;
+  user_id: string;
   created_at: string;
   updated_at: string;
 }
@@ -49,10 +51,5 @@ export interface Click {
   ip_hash?: string;
   host?: string;
   path?: string;
-  created_at: string;
-}
-
-export interface AllowedAdmin {
-  email: string;
   created_at: string;
 }

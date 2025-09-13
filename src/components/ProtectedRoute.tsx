@@ -4,28 +4,22 @@ import { useAuth } from '@/hooks/useAuth';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requireAdmin?: boolean;
 }
 
-export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
-  const { user, loading, adminLoading, isAdmin } = useAuth();
+export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (loading || (requireAdmin && adminLoading)) return;
+    if (loading) return;
 
     if (!user) {
       navigate('/login');
       return;
     }
+  }, [user, loading, navigate]);
 
-    if (requireAdmin && !isAdmin()) {
-      navigate('/forbidden');
-      return;
-    }
-  }, [user, loading, adminLoading, isAdmin, navigate, requireAdmin]);
-
-  if (loading || (requireAdmin && adminLoading)) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <span className="loading loading-spinner loading-lg"></span>
@@ -34,7 +28,6 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
   }
 
   if (!user) return null;
-  if (requireAdmin && !isAdmin()) return null;
 
   return <>{children}</>;
 };

@@ -14,21 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      allowed_admins: {
-        Row: {
-          created_at: string
-          email: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-        }
-        Relationships: []
-      }
       clicks: {
         Row: {
           created_at: string
@@ -43,6 +28,7 @@ export type Database = {
           referrer: string | null
           service_id: string
           user_agent: string | null
+          user_id: string | null
           utm_campaign: string | null
           utm_medium: string | null
           utm_source: string | null
@@ -61,6 +47,7 @@ export type Database = {
           referrer?: string | null
           service_id: string
           user_agent?: string | null
+          user_id?: string | null
           utm_campaign?: string | null
           utm_medium?: string | null
           utm_source?: string | null
@@ -79,6 +66,7 @@ export type Database = {
           referrer?: string | null
           service_id?: string
           user_agent?: string | null
+          user_id?: string | null
           utm_campaign?: string | null
           utm_medium?: string | null
           utm_source?: string | null
@@ -117,6 +105,7 @@ export type Database = {
           status: Database["public"]["Enums"]["episode_status"]
           title: string | null
           updated_at: string
+          user_id: string
           youtube_url: string | null
         }
         Insert: {
@@ -134,6 +123,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["episode_status"]
           title?: string | null
           updated_at?: string
+          user_id: string
           youtube_url?: string | null
         }
         Update: {
@@ -151,6 +141,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["episode_status"]
           title?: string | null
           updated_at?: string
+          user_id?: string
           youtube_url?: string | null
         }
         Relationships: [
@@ -174,6 +165,7 @@ export type Database = {
           slug: string
           spotify_show_url: string | null
           updated_at: string
+          user_id: string
           youtube_channel_url: string | null
         }
         Insert: {
@@ -186,6 +178,7 @@ export type Database = {
           slug: string
           spotify_show_url?: string | null
           updated_at?: string
+          user_id: string
           youtube_channel_url?: string | null
         }
         Update: {
@@ -198,6 +191,7 @@ export type Database = {
           slug?: string
           spotify_show_url?: string | null
           updated_at?: string
+          user_id?: string
           youtube_channel_url?: string | null
         }
         Relationships: []
@@ -207,10 +201,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
       app_platform: "NOTE" | "YOUTUBE" | "SPOTIFY" | "INSTAGRAM" | "CUSTOM"

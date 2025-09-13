@@ -6,8 +6,6 @@ export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [admin, setAdmin] = useState(false);
-  const [adminLoading, setAdminLoading] = useState(true);
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -29,39 +27,6 @@ export const useAuth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Check admin status when user changes
-  useEffect(() => {
-    let cancelled = false;
-
-    const checkAdmin = async () => {
-      if (!user) {
-        setAdmin(false);
-        setAdminLoading(false);
-        return;
-      }
-      setAdminLoading(true);
-      try {
-        const { data } = await supabase.rpc('is_admin');
-        if (!cancelled) {
-          setAdmin(data === true);
-        }
-      } catch (e) {
-        if (!cancelled) {
-          setAdmin(false);
-        }
-      } finally {
-        if (!cancelled) {
-          setAdminLoading(false);
-        }
-      }
-    };
-
-    checkAdmin();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [user]);
 
   const signInWithGoogle = async () => {
     const redirectUrl = `${window.location.origin}/auth/callback`;
@@ -81,15 +46,11 @@ export const useAuth = () => {
     return { error };
   };
 
-  const isAdmin = () => admin;
-
   return {
     user,
     session,
     loading,
-    adminLoading,
     signInWithGoogle,
-    signOut,
-    isAdmin
+    signOut
   };
 };

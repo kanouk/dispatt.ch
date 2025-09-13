@@ -21,10 +21,13 @@ export const useCreateService = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (service: Omit<Service, 'id' | 'created_at' | 'updated_at'>) => {
+    mutationFn: async (service: Omit<Service, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
       const { data, error } = await supabase
         .from('services')
-        .insert(service)
+        .insert({
+          ...service,
+          user_id: (await supabase.auth.getUser()).data.user?.id
+        })
         .select()
         .single();
       

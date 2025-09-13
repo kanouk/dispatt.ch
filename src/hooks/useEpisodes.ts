@@ -38,10 +38,13 @@ export const useCreateEpisode = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (episode: Omit<Episode, 'id' | 'created_at' | 'updated_at'>) => {
+    mutationFn: async (episode: Omit<Episode, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
       const { data, error } = await supabase
         .from('episodes')
-        .insert(episode)
+        .insert({
+          ...episode,
+          user_id: (await supabase.auth.getUser()).data.user?.id
+        })
         .select()
         .single();
       
