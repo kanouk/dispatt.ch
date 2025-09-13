@@ -19,7 +19,7 @@ const Redirect: React.FC = () => {
       ? `/${service}/ep/${epNo}/${variant}`
       : `/${service}/ep/${epNo}`;
 
-    const url = new URL(FUNCTIONS_ORIGIN + path);
+    const url = new URL(`${FUNCTIONS_ORIGIN}/redirect${path}`);
 
     // Preserve all query params
     const current = new URLSearchParams(location.search);

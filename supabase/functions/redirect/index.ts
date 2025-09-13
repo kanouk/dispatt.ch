@@ -45,10 +45,12 @@ Deno.serve(async (req) => {
 
   try {
     const url = new URL(req.url);
-    const pathname = url.pathname;
+    const rawPathname = url.pathname;
+    // Normalize to allow calling as /redirect/{service}/ep/{...}
+    const pathname = rawPathname.replace(/^\/redirect(\/|$)/, '/');
     const searchParams = url.searchParams;
     
-    console.log('Redirect request:', { pathname, search: url.search });
+    console.log('Redirect request:', { rawPathname, pathname, search: url.search });
 
     // Parse URL pattern: /{service}/ep/{epNo}(/{variant})?
     const pathRegex = /^\/([^\/]+)\/ep\/(\d+)(?:\/([^\/]+))?$/;
