@@ -31,8 +31,8 @@ const App = () => (
           <Route path="/health" element={<Health />} />
 
           {/** Public redirect bridge (no auth) */}
-          <Route path=":service/ep/:epNo" element={<React.Suspense fallback={<div />}>{React.createElement(React.lazy(() => import('./pages/Redirect')))}</React.Suspense>} />
-          <Route path=":service/ep/:epNo/:variant" element={<React.Suspense fallback={<div />}>{React.createElement(React.lazy(() => import('./pages/Redirect')))}</React.Suspense>} />
+          <Route path="/:service/ep/:epNo" element={<React.Suspense fallback={<div />}>{React.createElement(React.lazy(() => import('./pages/Redirect')))}</React.Suspense>} />
+          <Route path="/:service/ep/:epNo/:variant" element={<React.Suspense fallback={<div />}>{React.createElement(React.lazy(() => import('./pages/Redirect')))}</React.Suspense>} />
 
           <Route 
             path="/" 
