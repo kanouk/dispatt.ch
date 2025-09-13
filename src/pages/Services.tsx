@@ -585,12 +585,17 @@ const EpisodeForm = ({ service, episode, onSubmit, onCancel }: EpisodeFormProps)
     custom_url: episode?.custom_url || '',
     fallback_behavior: episode?.fallback_behavior || 'FALLBACK_TO_CHANNEL' as FallbackBehavior,
     status: episode?.status || 'DRAFT' as EpisodeStatus,
-    published_at: episode?.published_at || '',
+    published_at: episode?.published_at || null,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    // 空文字列のpublished_atをnullに変換
+    const cleanedData = {
+      ...formData,
+      published_at: formData.published_at === '' ? null : formData.published_at
+    };
+    onSubmit(cleanedData);
   };
 
   return (
