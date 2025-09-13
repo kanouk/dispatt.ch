@@ -8,11 +8,11 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
-  const { user, loading, isAdmin } = useAuth();
+  const { user, loading, adminLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || (requireAdmin && adminLoading)) return;
 
     if (!user) {
       navigate('/login');
@@ -23,9 +23,9 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
       navigate('/forbidden');
       return;
     }
-  }, [user, loading, isAdmin, navigate, requireAdmin]);
+  }, [user, loading, adminLoading, isAdmin, navigate, requireAdmin]);
 
-  if (loading) {
+  if (loading || (requireAdmin && adminLoading)) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <span className="loading loading-spinner loading-lg"></span>
