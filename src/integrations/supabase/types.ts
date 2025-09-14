@@ -251,6 +251,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -267,6 +291,17 @@ export type Database = {
           slug: string
         }[]
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["user_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       app_platform:
@@ -278,6 +313,7 @@ export type Database = {
         | "TIKTOK"
       episode_status: "DRAFT" | "LIVE" | "ARCHIVED"
       fallback_behavior: "COMING_SOON" | "FALLBACK_TO_CHANNEL"
+      user_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -415,6 +451,7 @@ export const Constants = {
       ],
       episode_status: ["DRAFT", "LIVE", "ARCHIVED"],
       fallback_behavior: ["COMING_SOON", "FALLBACK_TO_CHANNEL"],
+      user_role: ["admin", "user"],
     },
   },
 } as const

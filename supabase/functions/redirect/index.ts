@@ -22,7 +22,11 @@ const extractDomain = (url: string): string | null => {
 
 // Hash IP with salt for privacy
 const hashIP = async (ip: string): Promise<string> => {
-  const salt = Deno.env.get('IP_HASH_SALT') || 'default-salt';
+  const salt = Deno.env.get('IP_HASH_SALT');
+  if (!salt) {
+    console.error('IP_HASH_SALT environment variable not set');
+    throw new Error('Server configuration error');
+  }
   const encoder = new TextEncoder();
   const data = encoder.encode(ip + salt);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
