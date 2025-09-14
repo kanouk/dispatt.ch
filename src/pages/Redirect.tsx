@@ -105,16 +105,29 @@ const Redirect: React.FC = () => {
       <title>リダイレクト中 | dispatt.ch</title>
 
       <section className="bg-card rounded-3xl shadow-xl border p-12 max-w-lg w-full text-center animate-fade-in">
-        {/* Elegant loading indicator */}
+        {/* Rocket loading indicator */}
         <div className="mb-8 animate-scale-in" style={{ animationDelay: '0.2s' }}>
-          <div className="relative w-16 h-16 mx-auto">
-            <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
-            <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-pulse"></div>
-            <div className="absolute inset-2 rounded-full bg-primary/10 flex items-center justify-center">
-              <span className="text-2xl animate-bounce">🚀</span>
-            </div>
+          <div className="flex items-center justify-center">
+            <span 
+              className="text-4xl" 
+              style={{ 
+                animation: 'shake 0.15s ease-in-out infinite',
+                transformOrigin: 'center'
+              }}
+            >
+              🚀
+            </span>
           </div>
         </div>
+
+        <style>{`
+          @keyframes shake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-1px, -1px) rotate(-1deg); }
+            50% { transform: translate(1px, -1px) rotate(1deg); }
+            75% { transform: translate(-1px, 1px) rotate(-1deg); }
+          }
+        `}</style>
 
         {/* Content with staggered animations */}
         <div className="space-y-6">
