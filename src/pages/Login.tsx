@@ -32,7 +32,7 @@ const Login = () => {
           <div className="text-6xl mb-4">🚀</div>
           <h1 className="text-4xl font-bold text-gradient mb-2">dispatt.ch</h1>
           <p className="text-muted-foreground text-lg">
-            短縮URLで配信を<span className="text-primary font-medium">もっと簡単</span>に 📡
+            複数メディアへの配信を<span className="text-primary font-medium">効率的</span>に 📡
           </p>
         </div>
 
@@ -40,30 +40,26 @@ const Login = () => {
           <div className="space-y-6">
             <div className="text-center">
               <h2 className="text-2xl font-semibold mb-2">ようこそ！ 👋</h2>
-              <p className="text-muted-foreground">
-                YouTubeやSpotifyなどの長いURLを<br />
-                短くて覚えやすいリンクに変換 ✨
-              </p>
             </div>
 
             <div className="space-y-4">
               <div className="bg-muted/50 rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="text-2xl">🎯</span>
-                  <span className="font-medium">簡単管理</span>
+                  <span className="text-2xl">📊</span>
+                  <span className="font-medium">簡単分析</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  全てのサービスを一箇所で管理
+                  クリック数の追跡で効果測定が簡単
                 </p>
               </div>
 
               <div className="bg-muted/50 rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="text-2xl">⚡</span>
-                  <span className="font-medium">高速配信</span>
+                  <span className="text-2xl">🗂️</span>
+                  <span className="font-medium">体系的管理</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  瞬時にリダイレクト、待ち時間ゼロ
+                  各メディアのURLを規則的に整理・管理
                 </p>
               </div>
             </div>
