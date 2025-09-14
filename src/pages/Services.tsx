@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Check, X, Search, ExternalLink, Copy, ChevronRight, ChevronDown } from "lucide-react";
 import { getPublicUrl } from "@/utils/url";
+import { PlatformIcon } from "@/components/ui/platform-icon";
 import type { Service, Episode, AppPlatform, EpisodeStatus, FallbackBehavior } from "@/types/database";
 
 const Services = () => {
@@ -177,13 +178,22 @@ const Services = () => {
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
-  const platformLabels = {
-    NOTE: '📝 Note',
-    YOUTUBE: '📺 YouTube',
-    SPOTIFY: '🎵 Spotify',
-    INSTAGRAM: '📸 Instagram',
-    TIKTOK: '🎬 TikTok',
-    CUSTOM: '🔧 Custom'
+  const getPlatformLabel = (platform: AppPlatform) => {
+    const configs = {
+      NOTE: { icon: 'FaStickyNote', label: 'Note' },
+      YOUTUBE: { icon: 'FaYoutube', label: 'YouTube' },
+      SPOTIFY: { icon: 'FaSpotify', label: 'Spotify' },
+      INSTAGRAM: { icon: 'FaInstagram', label: 'Instagram' },
+      TIKTOK: { icon: 'FaTiktok', label: 'TikTok' },
+      CUSTOM: { icon: 'FaGlobe', label: 'Custom' }
+    };
+    const config = configs[platform];
+    return (
+      <span className="flex items-center gap-1">
+        <PlatformIcon iconName={config.icon} size={16} />
+        {config.label}
+      </span>
+    );
   };
 
   if (isLoading) {
@@ -258,8 +268,8 @@ const Services = () => {
                     <SelectValue placeholder="プラットフォームを選択" />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(platformLabels).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>{label}</SelectItem>
+                    {(['NOTE', 'YOUTUBE', 'SPOTIFY', 'INSTAGRAM', 'TIKTOK', 'CUSTOM'] as AppPlatform[]).map((value) => (
+                      <SelectItem key={value} value={value}>{getPlatformLabel(value)}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -370,7 +380,7 @@ const Services = () => {
                   <div>
                     <CardTitle className="text-lg">{service.name}</CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      slug: {service.slug} | 既定: {platformLabels[service.default_platform]}
+                      slug: {service.slug} | 既定: {getPlatformLabel(service.default_platform)}
                     </p>
                   </div>
                 </div>
@@ -391,11 +401,36 @@ const Services = () => {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {service.note_home_url && <Badge variant="secondary" className="bg-blue-100 text-blue-800">📝 Note <Check className="h-3 w-3 ml-1" /></Badge>}
-                {service.youtube_channel_url && <Badge variant="secondary" className="bg-red-100 text-red-800">📺 YouTube <Check className="h-3 w-3 ml-1" /></Badge>}
-                {service.spotify_show_url && <Badge variant="secondary" className="bg-green-100 text-green-800">🎵 Spotify <Check className="h-3 w-3 ml-1" /></Badge>}
-                {service.instagram_profile_url && <Badge variant="secondary" className="bg-pink-100 text-pink-800">📸 Instagram <Check className="h-3 w-3 ml-1" /></Badge>}
-                {service.tiktok_profile_url && <Badge variant="secondary" className="bg-purple-100 text-purple-800">🎬 TikTok <Check className="h-3 w-3 ml-1" /></Badge>}
+                {service.note_home_url && (
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 flex items-center gap-1">
+                    <PlatformIcon iconName="FaStickyNote" size={12} />
+                    Note <Check className="h-3 w-3 ml-1" />
+                  </Badge>
+                )}
+                {service.youtube_channel_url && (
+                  <Badge variant="secondary" className="bg-red-100 text-red-800 flex items-center gap-1">
+                    <PlatformIcon iconName="FaYoutube" size={12} />
+                    YouTube <Check className="h-3 w-3 ml-1" />
+                  </Badge>
+                )}
+                {service.spotify_show_url && (
+                  <Badge variant="secondary" className="bg-green-100 text-green-800 flex items-center gap-1">
+                    <PlatformIcon iconName="FaSpotify" size={12} />
+                    Spotify <Check className="h-3 w-3 ml-1" />
+                  </Badge>
+                )}
+                {service.instagram_profile_url && (
+                  <Badge variant="secondary" className="bg-pink-100 text-pink-800 flex items-center gap-1">
+                    <PlatformIcon iconName="FaInstagram" size={12} />
+                    Instagram <Check className="h-3 w-3 ml-1" />
+                  </Badge>
+                )}
+                {service.tiktok_profile_url && (
+                  <Badge variant="secondary" className="bg-purple-100 text-purple-800 flex items-center gap-1">
+                    <PlatformIcon iconName="FaTiktok" size={12} />
+                    TikTok <Check className="h-3 w-3 ml-1" />
+                  </Badge>
+                )}
               </div>
             </CardContent>
           </Card>
