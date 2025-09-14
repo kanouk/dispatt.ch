@@ -28,6 +28,26 @@ export const useAllUserPlatforms = () => {
         .order('display_order');
       
       if (error) throw error;
+      
+      // If no platforms exist, create default ones
+      if (data.length === 0) {
+        const { data: user } = await supabase.auth.getUser();
+        if (user.user) {
+          await supabase.rpc('create_default_user_platforms', { 
+            target_user_id: user.user.id 
+          });
+          
+          // Fetch again after creating defaults
+          const { data: newData, error: newError } = await supabase
+            .from('user_platforms')
+            .select('*')
+            .order('display_order');
+          
+          if (newError) throw newError;
+          return newData as UserPlatform[];
+        }
+      }
+      
       return data as UserPlatform[];
     },
   });

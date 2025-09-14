@@ -256,6 +256,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_default_user_platforms: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
       get_service_display_info: {
         Args: { service_slug: string }
         Returns: {
