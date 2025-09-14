@@ -13,6 +13,39 @@ const Redirect: React.FC = () => {
   const location = useLocation();
   const [countdown, setCountdown] = useState(3);
 
+  // プラットフォーム名の日本語変換
+  const getPlatformName = (platform?: string) => {
+    switch (platform) {
+      case 'youtube': return 'YouTube';
+      case 'spotify': return 'Spotify';
+      case 'note': return 'Note';
+      case 'apple': return 'Apple Podcasts';
+      case 'google': return 'Google Podcasts';
+      case 'instagram': return 'Instagram';
+      case 'tiktok': return 'TikTok';
+      default: return 'デフォルト';
+    }
+  };
+
+  // サービス名を日本語に変換（必要に応じてカスタマイズ）
+  const getServiceDisplayName = (serviceSlug?: string) => {
+    if (!serviceSlug) return 'サービス';
+    
+    // スラッグを日本語表示用に変換
+    switch (serviceSlug) {
+      case 'kosui-radio': return '香水ラジオ';
+      case 'tech-talk': return 'テックトーク';  
+      // 他のサービスも必要に応じて追加
+      default: 
+        // スラッグをそのまま表示（ハイフンをスペースに変換）
+        return serviceSlug.replace(/-/g, ' ');
+    }
+  };
+
+  const serviceName = getServiceDisplayName(service);
+  const platformName = getPlatformName(variant);
+  const episodeNumber = epNo ? `第${epNo}話` : 'エピソード';
+
   useEffect(() => {
     if (!service || !epNo) return;
 
@@ -86,9 +119,14 @@ const Redirect: React.FC = () => {
             {countdown > 0 ? `${countdown}秒後に移動` : '移動中...'}
           </h1>
           
-          <p className="text-lg text-gray-700 mb-4 font-medium">
-            お気に入りのプラットフォームへ ✨
-          </p>
+          <div className="mb-4 space-y-1">
+            <p className="text-lg font-semibold text-gray-800">
+              {serviceName}
+            </p>
+            <p className="text-base text-gray-600">
+              {episodeNumber} → <span className="text-blue-600 font-medium">{platformName}</span>
+            </p>
+          </div>
 
           {/* Countdown circle */}
           <div className="space-y-4 mb-6">
@@ -135,7 +173,7 @@ const Redirect: React.FC = () => {
             <div className="text-2xl mb-2">🎉</div>
             <p className="text-sm text-gray-700 leading-relaxed">
               <span className="font-semibold text-blue-600">dispatt.ch</span> で<br />
-              もっと楽しいコンテンツ体験を！
+              コンテンツを簡単にお届け！
             </p>
           </div>
 
