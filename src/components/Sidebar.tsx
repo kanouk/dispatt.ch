@@ -8,7 +8,6 @@ export const Sidebar = () => {
     { path: '/', label: 'ダッシュボード', icon: '🏠' },
     { path: '/services', label: 'サービス・エピソード', icon: '🎬' },
     { path: '/analytics', label: '分析', icon: '📊' },
-    { path: '/health', label: 'ヘルスチェック', icon: '⚡' },
   ];
 
   return (
@@ -34,8 +33,8 @@ export const Sidebar = () => {
                 }`}
                 onClick={() => navigate(item.path)}
               >
-                <span className="text-lg">{item.icon}</span>
-                <span className="font-medium">{item.label}</span>
+                <span className="text-base">{item.icon}</span>
+                <span className="text-sm font-medium">{item.label}</span>
               </button>
             ))}
           </nav>

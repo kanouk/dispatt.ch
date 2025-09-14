@@ -24,7 +24,7 @@ export const Navbar = () => {
               onClick={() => navigate('/')}
             >
               <span className="text-2xl">🚀</span>
-              Dispatt
+              dispatt.ch
             </button>
           </div>
           

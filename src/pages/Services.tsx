@@ -417,7 +417,7 @@ const Services = () => {
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-2xl font-bold text-accent">🎯 エピソード管理</h2>
+              <h2 className="text-2xl font-bold text-foreground">🎯 エピソード管理</h2>
               <p className="text-muted-foreground">
                 ✨ 「{selectedService?.name}」のエピソードを管理
               </p>
@@ -437,7 +437,7 @@ const Services = () => {
 
             <Dialog open={isEpisodeDialogOpen} onOpenChange={setIsEpisodeDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70">
+                <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70">
                   <Plus className="h-4 w-4 mr-2" />
                   🎬 エピソード作成
                 </Button>

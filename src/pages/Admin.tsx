@@ -26,22 +26,6 @@ const Admin = () => {
         <p className="text-muted-foreground">
           短縮URL管理システムの概要とKPI
         </p>
-        
-        {/* Quick Actions */}
-        <div className="flex gap-3 mt-4">
-          <Button asChild>
-            <Link to="/services">
-              <Settings className="h-4 w-4 mr-2" />
-              サービス・エピソード管理へ
-            </Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link to="/analytics">
-              <TrendingUp className="h-4 w-4 mr-2" />
-              分析へ
-            </Link>
-          </Button>
-        </div>
       </div>
 
       {/* KPI Cards */}
@@ -107,45 +91,6 @@ const Admin = () => {
         </Card>
       </div>
 
-      {/* Upcoming Episodes */}
-      <Card>
-        <CardHeader>
-          <CardTitle>近日公開エピソード</CardTitle>
-          <CardDescription>
-            公開準備中のエピソード一覧（上位5件）
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {upcomingEpisodes.length > 0 ? (
-            <div className="space-y-4">
-              {upcomingEpisodes.map((episode: any) => (
-                <div key={episode.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div>
-                      <p className="font-medium">
-                        {episode.services?.name} - EP{episode.ep_no}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {episode.title || '（タイトル未設定）'}
-                      </p>
-                    </div>
-                    <Badge variant="secondary">DRAFT</Badge>
-                  </div>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link to={`/services?service=${episode.service_id}`}>
-                      編集
-                    </Link>
-                  </Button>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-muted-foreground text-center py-8">
-              公開準備中のエピソードはありません
-            </p>
-          )}
-        </CardContent>
-      </Card>
     </AdminLayout>
   );
 };
