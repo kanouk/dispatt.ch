@@ -109,9 +109,9 @@ const Redirect: React.FC = () => {
         <div className="mb-8 animate-scale-in" style={{ animationDelay: '0.2s' }}>
           <div className="relative w-16 h-16 mx-auto">
             <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
-            <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-spin" style={{ animationDuration: '1.5s' }}></div>
+            <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-pulse"></div>
             <div className="absolute inset-2 rounded-full bg-primary/10 flex items-center justify-center">
-              <span className="text-2xl">🎯</span>
+              <span className="text-2xl animate-bounce">🚀</span>
             </div>
           </div>
         </div>
