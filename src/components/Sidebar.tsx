@@ -14,22 +14,31 @@ export const Sidebar = () => {
   return (
     <div className="drawer-side">
       <label htmlFor="drawer-toggle" className="drawer-overlay"></label>
-      <aside className="w-64 min-h-full bg-card border-r">
-        <div className="p-4">
-          <h2 className="text-xl font-bold mb-4 text-primary">📋 メニュー</h2>
-          <ul className="menu">
+      <aside className="w-64 min-h-full bg-card border-r border-border">
+        <div className="p-6">
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold text-muted-foreground mb-1">
+              ナビゲーション
+            </h2>
+            <div className="w-8 h-0.5 bg-primary rounded-full"></div>
+          </div>
+          
+          <nav className="space-y-2">
             {menuItems.map((item) => (
-              <li key={item.path}>
-                <a
-                  className={`${location.pathname === item.path ? 'active' : ''}`}
-                  onClick={() => navigate(item.path)}
-                >
-                  <span className="text-lg mr-2">{item.icon}</span>
-                  {item.label}
-                </a>
-              </li>
+              <button
+                key={item.path}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-left ${
+                  location.pathname === item.path 
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                }`}
+                onClick={() => navigate(item.path)}
+              >
+                <span className="text-lg">{item.icon}</span>
+                <span className="font-medium">{item.label}</span>
+              </button>
             ))}
-          </ul>
+          </nav>
         </div>
       </aside>
     </div>

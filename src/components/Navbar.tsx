@@ -12,30 +12,44 @@ export const Navbar = () => {
   };
 
   return (
-    <div className="navbar bg-card shadow-lg border-b">
-      <div className="flex-1">
-        <label htmlFor="drawer-toggle" className="btn btn-ghost lg:hidden mr-2">
-          <Menu className="w-5 h-5" />
-        </label>
-        <a className="btn btn-ghost normal-case text-xl font-bold" onClick={() => navigate('/')}>
-          🚀 Dispatt Admin
-        </a>
-      </div>
-      <div className="flex-none">
-        <div className="dropdown dropdown-end">
-          <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-            <div className="w-10 rounded-full">
-              <img src={user?.user_metadata?.avatar_url || '/placeholder.svg'} alt="Avatar" />
-            </div>
-          </label>
-          <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-            <li>
-              <div className="justify-between">
-                <span>{user?.email}</span>
+    <div className="bg-card border-b border-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center">
+            <label htmlFor="drawer-toggle" className="lg:hidden mr-3 p-2 rounded-lg hover:bg-muted transition-colors">
+              <Menu className="w-5 h-5" />
+            </label>
+            <button 
+              className="flex items-center gap-2 text-xl font-bold hover:text-primary transition-colors" 
+              onClick={() => navigate('/')}
+            >
+              <span className="text-2xl">🚀</span>
+              Dispatt
+            </button>
+          </div>
+          
+          <div className="flex items-center">
+            <div className="relative">
+              <button className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted transition-colors">
+                <img 
+                  src={user?.user_metadata?.avatar_url || '/placeholder.svg'} 
+                  alt="Avatar"
+                  className="w-8 h-8 rounded-full"
+                />
+                <span className="hidden sm:block text-sm font-medium">{user?.email}</span>
+              </button>
+              
+              <div className="absolute right-0 top-full mt-2 w-48 bg-card border border-border rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                <button 
+                  onClick={handleLogout}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors flex items-center gap-2"
+                >
+                  <span>👋</span>
+                  ログアウト
+                </button>
               </div>
-            </li>
-            <li><a onClick={handleLogout}>ログアウト</a></li>
-          </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
