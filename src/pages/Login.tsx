@@ -45,21 +45,21 @@ const Login = () => {
             <div className="space-y-4">
               <div className="bg-muted/50 rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="text-2xl">📊</span>
-                  <span className="font-medium">簡単分析</span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  クリック数の追跡で効果測定が簡単
-                </p>
-              </div>
-
-              <div className="bg-muted/50 rounded-xl p-4">
-                <div className="flex items-center gap-3 mb-2">
                   <span className="text-2xl">🗂️</span>
                   <span className="font-medium">体系的管理</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   各メディアのURLを規則的に整理・管理
+                </p>
+              </div>
+
+              <div className="bg-muted/50 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-2xl">📊</span>
+                  <span className="font-medium">簡単分析</span>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  クリック数の追跡で効果測定が簡単
                 </p>
               </div>
             </div>
