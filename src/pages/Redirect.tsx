@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 // Public redirect bridge: accepts dispatt.ch/{service}/ep/{epNo}/[:variant]
 // and forwards to the Supabase Edge Function which performs the actual redirect
@@ -11,7 +12,8 @@ const FUNCTIONS_ORIGIN = `https://${PROJECT_ID}.functions.supabase.co`;
 const Redirect: React.FC = () => {
   const { service, epNo, variant } = useParams();
   const location = useLocation();
-  const [countdown, setCountdown] = useState(3);
+  const [serviceName, setServiceName] = useState<string>('');
+  const [episodeTitle, setEpisodeTitle] = useState<string>('');
 
   // プラットフォーム名の日本語変換
   const getPlatformName = (platform?: string) => {
@@ -27,24 +29,49 @@ const Redirect: React.FC = () => {
     }
   };
 
-  // サービス名を日本語に変換（必要に応じてカスタマイズ）
-  const getServiceDisplayName = (serviceSlug?: string) => {
-    if (!serviceSlug) return 'サービス';
-    
-    // スラッグを日本語表示用に変換
-    switch (serviceSlug) {
-      case 'kosui-radio': return '香水ラジオ';
-      case 'tech-talk': return 'テックトーク';  
-      // 他のサービスも必要に応じて追加
-      default: 
-        // スラッグをそのまま表示（ハイフンをスペースに変換）
-        return serviceSlug.replace(/-/g, ' ');
-    }
-  };
-
-  const serviceName = getServiceDisplayName(service);
   const platformName = getPlatformName(variant);
   const episodeNumber = epNo ? `第${epNo}話` : 'エピソード';
+
+  useEffect(() => {
+    const fetchServiceInfo = async () => {
+      if (!service) return;
+
+      try {
+        // サービス情報を取得
+        const { data: serviceData, error: serviceError } = await supabase
+          .from('services')
+          .select('name, id')
+          .eq('slug', service)
+          .single();
+
+        if (serviceError || !serviceData) {
+          console.error('Service not found:', serviceError);
+          setServiceName(service); // フォールバック
+        } else {
+          setServiceName(serviceData.name);
+          
+          // エピソード情報も取得
+          if (epNo) {
+            const { data: episodeData } = await supabase
+              .from('episodes')
+              .select('title')
+              .eq('service_id', serviceData.id)
+              .eq('ep_no', parseInt(epNo))
+              .single();
+              
+            if (episodeData?.title) {
+              setEpisodeTitle(episodeData.title);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching service info:', error);
+        setServiceName(service || 'サービス');
+      }
+    };
+
+    fetchServiceInfo();
+  }, [service, epNo]);
 
   useEffect(() => {
     if (!service || !epNo) return;
@@ -61,20 +88,12 @@ const Redirect: React.FC = () => {
       if (!url.searchParams.has(k)) url.searchParams.set(k, v);
     });
 
-    // Countdown timer
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          // Send the browser to the Edge Function which will 302/308 to the target
-          window.location.replace(url.toString());
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    // 短い遅延後にリダイレクト（情報を表示するため）
+    const timer = setTimeout(() => {
+      window.location.replace(url.toString());
+    }, 1500);
 
-    return () => clearInterval(timer);
+    return () => clearTimeout(timer);
   }, [service, epNo, variant, location.search]);
 
   return (
@@ -116,50 +135,33 @@ const Redirect: React.FC = () => {
           </div>
 
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">
-            {countdown > 0 ? `${countdown}秒後に移動` : '移動中...'}
+            移動中...
           </h1>
           
           <div className="mb-4 space-y-1">
             <p className="text-lg font-semibold text-gray-800">
-              {serviceName}
+              {serviceName || 'サービス'}
             </p>
             <p className="text-base text-gray-600">
-              {episodeNumber} → <span className="text-blue-600 font-medium">{platformName}</span>
+              {episodeTitle ? (
+                <>
+                  {episodeNumber}: {episodeTitle} → <span className="text-blue-600 font-medium">{platformName}</span>
+                </>
+              ) : (
+                <>
+                  {episodeNumber} → <span className="text-blue-600 font-medium">{platformName}</span>
+                </>
+              )}
             </p>
           </div>
 
-          {/* Countdown circle */}
+          {/* Loading animation */}
           <div className="space-y-4 mb-6">
             <div className="relative w-16 h-16 mx-auto">
-              <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
-                <circle
-                  cx="32"
-                  cy="32"
-                  r="28"
-                  fill="none"
-                  stroke="#e5e7eb"
-                  strokeWidth="4"
-                />
-                <circle
-                  cx="32"
-                  cy="32"
-                  r="28"
-                  fill="none"
-                  stroke="url(#gradient)"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  strokeDasharray={`${(3 - countdown) * (175.9 / 3)} 175.9`}
-                  className="transition-all duration-1000"
-                />
-                <defs>
-                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#3b82f6" />
-                    <stop offset="100%" stopColor="#8b5cf6" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl font-bold text-blue-600">{countdown}</span>
+              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-spin mx-auto flex items-center justify-center" style={{ animationDuration: '1s' }}>
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                  <span className="text-2xl">🎯</span>
+                </div>
               </div>
             </div>
             
@@ -180,13 +182,10 @@ const Redirect: React.FC = () => {
           {/* Progress bar */}
           <div className="mt-4">
             <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-              <div 
-                className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-1000" 
-                style={{ width: `${((3 - countdown) / 3) * 100}%` }}
-              ></div>
+              <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full animate-pulse"></div>
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              {countdown > 0 ? 'コンテンツを準備中...' : 'まもなく完了！'}
+              まもなく完了！
             </p>
           </div>
         </div>
