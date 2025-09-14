@@ -257,7 +257,7 @@ export type Database = {
     }
     Functions: {
       create_default_user_platforms: {
-        Args: { target_user_id: string }
+        Args: Record<PropertyKey, never> | { target_user_id: string }
         Returns: undefined
       }
       get_service_display_info: {
