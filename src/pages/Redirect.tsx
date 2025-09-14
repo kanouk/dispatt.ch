@@ -91,7 +91,7 @@ const Redirect: React.FC = () => {
     // 短い遅延後にリダイレクト（情報を表示するため）
     const timer = setTimeout(() => {
       window.location.replace(url.toString());
-    }, 1500);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [service, epNo, variant, location.search]);
