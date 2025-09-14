@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useAllUserPlatforms, useCreateUserPlatform, useUpdateUserPlatform, useDeleteUserPlatform, useCreateDefaultPlatforms } from '@/hooks/useUserPlatforms';
 import { Plus, Edit2, Trash2, GripVertical } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { PlatformIcon } from '@/components/ui/platform-icon';
 import type { UserPlatform } from '@/types/database';
 
 interface PlatformFormData {
@@ -151,13 +152,21 @@ export const PlatformManager = () => {
       </div>
       
       <div>
-        <Label htmlFor="platform_icon">アイコン（絵文字）</Label>
+        <Label htmlFor="platform_icon">アイコン</Label>
         <Input
           id="platform_icon"
           value={formData.platform_icon}
           onChange={(e) => setFormData({ ...formData, platform_icon: e.target.value })}
-          placeholder="例: 📱"
+          placeholder="例: FaYoutube, FaInstagram, SiNote"
         />
+        <div className="mt-2 flex items-center space-x-2">
+          <span className="text-sm text-muted-foreground">プレビュー:</span>
+          <PlatformIcon 
+            iconName={formData.platform_icon || 'FaGlobe'} 
+            size={20}
+            color={formData.platform_color}
+          />
+        </div>
       </div>
       
       <div>
@@ -225,7 +234,11 @@ export const PlatformManager = () => {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="flex items-center space-x-2">
                 <GripVertical className="w-4 h-4 text-muted-foreground" />
-                <span className="text-lg">{platform.platform_icon}</span>
+                <PlatformIcon 
+                  iconName={platform.platform_icon || 'FaGlobe'} 
+                  size={20}
+                  color={platform.platform_color || 'currentColor'}
+                />
                 <span>{platform.platform_name}</span>
                 <span className="text-sm text-muted-foreground">({platform.platform_slug})</span>
               </CardTitle>
