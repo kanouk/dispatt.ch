@@ -37,30 +37,30 @@ const Redirect: React.FC = () => {
       if (!service) return;
 
       try {
-        // サービス情報を取得
+        // Use the secure function to get only minimal service data
         const { data: serviceData, error: serviceError } = await supabase
-          .from('services')
-          .select('name, id')
-          .eq('slug', service)
-          .single();
+          .rpc('get_service_display_info', { service_slug: service });
 
-        if (serviceError || !serviceData) {
+        if (serviceError || !serviceData || serviceData.length === 0) {
           console.error('Service not found:', serviceError);
           setServiceName(service); // フォールバック
         } else {
-          setServiceName(serviceData.name);
+          setServiceName(serviceData[0].name);
           
-          // エピソード情報も取得
+          // Get episode info if needed (this still requires authentication for user's own episodes)
           if (epNo) {
-            const { data: episodeData } = await supabase
-              .from('episodes')
-              .select('title')
-              .eq('service_id', serviceData.id)
-              .eq('ep_no', parseInt(epNo))
-              .single();
-              
-            if (episodeData?.title) {
-              setEpisodeTitle(episodeData.title);
+            // Only fetch episode data for authenticated users viewing their own content
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+              const { data: episodeData } = await supabase
+                .from('episodes')
+                .select('title')
+                .eq('ep_no', parseInt(epNo))
+                .single();
+                
+              if (episodeData?.title) {
+                setEpisodeTitle(episodeData.title);
+              }
             }
           }
         }

@@ -204,7 +204,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_service_display_info: {
+        Args: { service_slug: string }
+        Returns: {
+          name: string
+          slug: string
+        }[]
+      }
     }
     Enums: {
       app_platform:
