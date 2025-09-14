@@ -117,3 +117,24 @@ export const useDeleteUserPlatform = () => {
     },
   });
 };
+
+export const useCreateDefaultPlatforms = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const { error } = await supabase.rpc('create_default_user_platforms', {
+        target_user_id: user.id
+      });
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-platforms'] });
+      queryClient.invalidateQueries({ queryKey: ['user-platforms-all'] });
+    },
+  });
+};
