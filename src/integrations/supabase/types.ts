@@ -92,6 +92,7 @@ export type Database = {
       episodes: {
         Row: {
           created_at: string
+          custom_platform_id: string | null
           custom_url: string | null
           default_platform: Database["public"]["Enums"]["app_platform"]
           ep_no: number
@@ -110,6 +111,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          custom_platform_id?: string | null
           custom_url?: string | null
           default_platform: Database["public"]["Enums"]["app_platform"]
           ep_no: number
@@ -128,6 +130,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          custom_platform_id?: string | null
           custom_url?: string | null
           default_platform?: Database["public"]["Enums"]["app_platform"]
           ep_no?: number
@@ -145,6 +148,13 @@ export type Database = {
           youtube_url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "episodes_custom_platform_id_fkey"
+            columns: ["custom_platform_id"]
+            isOneToOne: false
+            referencedRelation: "user_platforms"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "episodes_service_id_fkey"
             columns: ["service_id"]
@@ -196,6 +206,48 @@ export type Database = {
           updated_at?: string
           user_id?: string
           youtube_channel_url?: string | null
+        }
+        Relationships: []
+      }
+      user_platforms: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_enabled: boolean
+          platform_color: string | null
+          platform_icon: string | null
+          platform_name: string
+          platform_slug: string
+          updated_at: string
+          url_template: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_enabled?: boolean
+          platform_color?: string | null
+          platform_icon?: string | null
+          platform_name: string
+          platform_slug: string
+          updated_at?: string
+          url_template?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_enabled?: boolean
+          platform_color?: string | null
+          platform_icon?: string | null
+          platform_name?: string
+          platform_slug?: string
+          updated_at?: string
+          url_template?: string | null
+          user_id?: string
         }
         Relationships: []
       }

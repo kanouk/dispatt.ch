@@ -10,6 +10,7 @@ import Logout from "./pages/Logout";
 import AuthCallback from "./pages/AuthCallback";
 import Admin from "./pages/Admin";
 import Services from "./pages/Services";
+import Platforms from "./pages/Platforms";
 import Analytics from "./pages/Analytics";
 import Forbidden from "./pages/Forbidden";
 import Health from "./pages/Health";
@@ -47,6 +48,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Services />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/platforms" 
+            element={
+              <ProtectedRoute>
+                <Platforms />
               </ProtectedRoute>
             } 
           />

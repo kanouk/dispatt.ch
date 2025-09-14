@@ -28,10 +28,25 @@ export interface Episode {
   spotify_url?: string;
   instagram_url?: string;
   custom_url?: string;
+  custom_platform_id?: string;
   fallback_behavior: FallbackBehavior;
   status: EpisodeStatus;
   published_at?: string;
   user_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserPlatform {
+  id: string;
+  user_id: string;
+  platform_name: string;
+  platform_slug: string;
+  platform_icon?: string;
+  platform_color?: string;
+  url_template?: string;
+  is_enabled: boolean;
+  display_order: number;
   created_at: string;
   updated_at: string;
 }

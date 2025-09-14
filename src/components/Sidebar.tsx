@@ -7,6 +7,7 @@ export const Sidebar = () => {
   const menuItems = [
     { path: '/', label: 'ダッシュボード', icon: '🏠' },
     { path: '/services', label: 'サービス・エピソード', icon: '🎬' },
+    { path: '/platforms', label: 'プラットフォーム管理', icon: '⚙️' },
     { path: '/analytics', label: '分析', icon: '📊' },
   ];
 
