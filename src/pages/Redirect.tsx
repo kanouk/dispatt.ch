@@ -149,15 +149,19 @@ const Redirect: React.FC = () => {
             </p>
           </div>
 
-          {/* Subtle progress indication */}
+          {/* Walking cat animation */}
           <div className="animate-fade-in" style={{ animationDelay: '0.8s' }}>
             <div className="bg-muted rounded-2xl p-6 border">
-              <div className="flex items-center justify-center gap-2 mb-3">
+              <div className="flex items-center justify-center gap-2 mb-4">
                 <span className="text-primary">✨</span>
                 <span className="text-sm font-medium text-muted-foreground">少しお待ちください</span>
               </div>
-              <div className="w-full bg-muted-foreground/20 rounded-full h-2 overflow-hidden">
-                <div className="bg-gradient-to-r from-primary to-primary/70 h-2 rounded-full w-full animate-pulse"></div>
+              <div className="relative w-full h-8 bg-muted-foreground/10 rounded-full overflow-hidden">
+                <div className="absolute inset-y-0 flex items-center">
+                  <div className="animate-walk text-xl">
+                    🐱
+                  </div>
+                </div>
               </div>
             </div>
           </div>
