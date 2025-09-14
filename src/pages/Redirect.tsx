@@ -97,96 +97,69 @@ const Redirect: React.FC = () => {
   }, [service, epNo, variant, location.search]);
 
   return (
-    <main role="main" className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center p-6 overflow-hidden relative">
+    <main role="main" className="min-h-screen bg-gradient-to-br from-background to-accent/20 flex items-center justify-center p-6">
       {/* SEO and metadata */}
       <link rel="canonical" href={typeof window !== 'undefined' ? window.location.href : ''} />
       <meta name="robots" content="noindex" />
       <meta name="description" content="エピソードへのリダイレクトを処理中です" />
       <title>リダイレクト中 | dispatt.ch</title>
 
-      {/* Floating animated elements */}
-      <div className="absolute top-20 left-10 text-4xl animate-bounce" style={{ animationDelay: '0s' }}>🚀</div>
-      <div className="absolute top-32 right-16 text-3xl animate-bounce" style={{ animationDelay: '0.5s' }}>✨</div>
-      <div className="absolute bottom-20 left-20 text-3xl animate-bounce" style={{ animationDelay: '1s' }}>🎬</div>
-      <div className="absolute bottom-32 right-12 text-4xl animate-bounce" style={{ animationDelay: '1.5s' }}>🎵</div>
-      <div className="absolute top-1/2 left-8 text-2xl animate-bounce" style={{ animationDelay: '2s' }}>📱</div>
-      <div className="absolute top-1/3 right-8 text-2xl animate-bounce" style={{ animationDelay: '2.5s' }}>💫</div>
-
-      <section className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 max-w-md w-full text-center border border-white/50 relative overflow-hidden">
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-4 left-4 w-8 h-8 bg-blue-500 rounded-full"></div>
-          <div className="absolute bottom-4 right-4 w-6 h-6 bg-purple-500 rounded-full"></div>
-          <div className="absolute top-1/2 left-2 w-4 h-4 bg-pink-500 rounded-full"></div>
-        </div>
-
-        <div className="relative z-10">
-          {/* Loading spinner */}
-          <div className="mb-6">
-            <div className="relative inline-block">
-              <div className="w-20 h-20 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-spin mx-auto mb-4 flex items-center justify-center" style={{ animationDuration: '2s' }}>
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-                  <span className="text-3xl">🎯</span>
-                </div>
-              </div>
-              <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full animate-ping"></div>
-              <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-green-400 rounded-full animate-pulse"></div>
+      <section className="bg-card rounded-3xl shadow-xl border p-12 max-w-lg w-full text-center animate-fade-in">
+        {/* Elegant loading indicator */}
+        <div className="mb-8 animate-scale-in" style={{ animationDelay: '0.2s' }}>
+          <div className="relative w-16 h-16 mx-auto">
+            <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
+            <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-spin" style={{ animationDuration: '1.5s' }}></div>
+            <div className="absolute inset-2 rounded-full bg-primary/10 flex items-center justify-center">
+              <span className="text-2xl">🎯</span>
             </div>
           </div>
+        </div>
 
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">
-            移動中...
-          </h1>
+        {/* Content with staggered animations */}
+        <div className="space-y-6">
+          <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              移動中
+            </h1>
+            <div className="w-12 h-1 bg-gradient-to-r from-primary to-primary/50 mx-auto rounded-full"></div>
+          </div>
           
-          <div className="mb-4 space-y-1">
-            <p className="text-lg font-semibold text-gray-800">
+          <div className="animate-fade-in space-y-3" style={{ animationDelay: '0.6s' }}>
+            <p className="text-xl font-semibold text-foreground">
               {serviceName || 'サービス'}
             </p>
-            <p className="text-base text-gray-600">
+            <p className="text-muted-foreground">
               {episodeTitle ? (
                 <>
-                  {episodeNumber}: {episodeTitle} → <span className="text-blue-600 font-medium">{platformName}</span>
+                  {episodeNumber}: {episodeTitle}
+                  <br />
+                  <span className="inline-flex items-center gap-1 mt-1">
+                    <span>→</span>
+                    <span className="text-primary font-medium">{platformName}</span>
+                  </span>
                 </>
               ) : (
-                <>
-                  {episodeNumber} → <span className="text-blue-600 font-medium">{platformName}</span>
-                </>
+                <span className="inline-flex items-center gap-2">
+                  <span>{episodeNumber}</span>
+                  <span>→</span>
+                  <span className="text-primary font-medium">{platformName}</span>
+                </span>
               )}
             </p>
           </div>
 
-          {/* Loading animation */}
-          <div className="space-y-4 mb-6">
-            <div className="relative w-16 h-16 mx-auto">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-spin mx-auto flex items-center justify-center" style={{ animationDuration: '1s' }}>
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                  <span className="text-2xl">🎯</span>
-                </div>
+          {/* Subtle progress indication */}
+          <div className="animate-fade-in" style={{ animationDelay: '0.8s' }}>
+            <div className="bg-muted rounded-2xl p-6 border">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <span className="text-primary">✨</span>
+                <span className="text-sm font-medium text-muted-foreground">少しお待ちください</span>
+              </div>
+              <div className="w-full bg-muted-foreground/20 rounded-full h-2 overflow-hidden">
+                <div className="bg-gradient-to-r from-primary to-primary/70 h-2 rounded-full w-full animate-pulse"></div>
               </div>
             </div>
-            
-            <p className="text-gray-600 text-sm">
-              少しお待ちください 🚀
-            </p>
-          </div>
-
-          {/* Fun message */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-5 border border-blue-100">
-            <div className="text-2xl mb-2">🎉</div>
-            <p className="text-sm text-gray-700 leading-relaxed">
-              <span className="font-semibold text-blue-600">dispatt.ch</span> で<br />
-              コンテンツを簡単にお届け！
-            </p>
-          </div>
-
-          {/* Progress bar */}
-          <div className="mt-4">
-            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full animate-pulse"></div>
-            </div>
-            <p className="text-xs text-gray-500 mt-2">
-              まもなく完了！
-            </p>
           </div>
         </div>
       </section>
