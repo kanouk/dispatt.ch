@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
 // Public redirect bridge: accepts dispatt.ch/{service}/ep/{epNo}/[:variant]
@@ -11,6 +11,7 @@ const FUNCTIONS_ORIGIN = `https://${PROJECT_ID}.functions.supabase.co`;
 const Redirect: React.FC = () => {
   const { service, epNo, variant } = useParams();
   const location = useLocation();
+  const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
     if (!service || !epNo) return;
@@ -27,8 +28,20 @@ const Redirect: React.FC = () => {
       if (!url.searchParams.has(k)) url.searchParams.set(k, v);
     });
 
-    // Send the browser to the Edge Function which will 302/308 to the target
-    window.location.replace(url.toString());
+    // Countdown timer
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          // Send the browser to the Edge Function which will 302/308 to the target
+          window.location.replace(url.toString());
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, [service, epNo, variant, location.search]);
 
   return (
@@ -70,23 +83,50 @@ const Redirect: React.FC = () => {
           </div>
 
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">
-            接続中...
+            {countdown > 0 ? `${countdown}秒後に移動` : '移動中...'}
           </h1>
           
           <p className="text-lg text-gray-700 mb-4 font-medium">
-            お気に入りのプラットフォームへ
+            お気に入りのプラットフォームへ ✨
           </p>
 
-          {/* Loading dots */}
-          <div className="space-y-3 mb-6">
-            <div className="flex justify-center gap-2">
-              <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0s' }}></div>
-              <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }}></div>
-              <div className="w-3 h-3 bg-pink-400 rounded-full animate-pulse" style={{ animationDelay: '0.6s' }}></div>
+          {/* Countdown circle */}
+          <div className="space-y-4 mb-6">
+            <div className="relative w-16 h-16 mx-auto">
+              <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="28"
+                  fill="none"
+                  stroke="#e5e7eb"
+                  strokeWidth="4"
+                />
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="28"
+                  fill="none"
+                  stroke="url(#gradient)"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeDasharray={`${(3 - countdown) * (175.9 / 3)} 175.9`}
+                  className="transition-all duration-1000"
+                />
+                <defs>
+                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#3b82f6" />
+                    <stop offset="100%" stopColor="#8b5cf6" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-2xl font-bold text-blue-600">{countdown}</span>
+              </div>
             </div>
             
             <p className="text-gray-600 text-sm">
-              <span className="font-medium text-gray-800">ジャンプ中</span> 🌟
+              少しお待ちください 🚀
             </p>
           </div>
 
@@ -100,11 +140,16 @@ const Redirect: React.FC = () => {
           </div>
 
           {/* Progress bar */}
-          <div className="mt-6">
-            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full animate-pulse" style={{ width: '75%' }}></div>
+          <div className="mt-4">
+            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+              <div 
+                className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-1000" 
+                style={{ width: `${((3 - countdown) / 3) * 100}%` }}
+              ></div>
             </div>
-            <p className="text-xs text-gray-500 mt-2">まもなく完了します...</p>
+            <p className="text-xs text-gray-500 mt-2">
+              {countdown > 0 ? 'コンテンツを準備中...' : 'まもなく完了！'}
+            </p>
           </div>
         </div>
       </section>
