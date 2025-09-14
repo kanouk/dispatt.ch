@@ -1,9 +1,10 @@
 import { PlatformManager } from '@/components/PlatformManager';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 
 export default function Platforms() {
   return (
-    <div className="p-6">
+    <AdminLayout>
       <PlatformManager />
-    </div>
+    </AdminLayout>
   );
 }

@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useAllUserPlatforms, useCreateUserPlatform, useUpdateUserPlatform, useDeleteUserPlatform } from '@/hooks/useUserPlatforms';
+import { useAllUserPlatforms, useCreateUserPlatform, useUpdateUserPlatform, useDeleteUserPlatform, useCreateDefaultPlatforms } from '@/hooks/useUserPlatforms';
 import { Plus, Edit2, Trash2, GripVertical } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { UserPlatform } from '@/types/database';
@@ -25,6 +25,7 @@ export const PlatformManager = () => {
   const createMutation = useCreateUserPlatform();
   const updateMutation = useUpdateUserPlatform();
   const deleteMutation = useDeleteUserPlatform();
+  const createDefaultMutation = useCreateDefaultPlatforms();
   const { toast } = useToast();
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -50,6 +51,13 @@ export const PlatformManager = () => {
       display_order: platforms.length,
     });
   };
+
+  // Auto-create default platforms if user has none
+  useEffect(() => {
+    if (!isLoading && platforms.length === 0) {
+      createDefaultMutation.mutate();
+    }
+  }, [platforms.length, isLoading, createDefaultMutation]);
 
   const handleCreate = async () => {
     try {
