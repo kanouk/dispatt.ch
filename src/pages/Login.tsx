@@ -31,9 +31,9 @@ const Login = () => {
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">🚀</div>
           <h1 className="text-4xl font-bold text-gradient mb-2">dispatt.ch</h1>
-          <p className="text-muted-foreground text-lg">
-            複数メディアへの配信を<span className="text-primary font-medium">効率的</span>に 📡
-          </p>
+           <p className="text-muted-foreground text-lg">
+             複数メディアへの配信管理を<span className="text-primary font-medium">効率的</span>に 📡
+           </p>
         </div>
 
         <div className="bg-card rounded-2xl shadow-xl p-8 border">
