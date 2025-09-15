@@ -363,19 +363,32 @@ const Services = () => {
                       placeholder="https://instagram.com/user"
                     />
                   </div>
-                   <div>
-                     <Label htmlFor="tiktok_profile_url">TikTok URL</Label>
-                     <Input 
-                       id="tiktok_profile_url"
-                       {...register("tiktok_profile_url", {
-                         pattern: {
-                           value: /^https:\/\/.+/,
-                           message: "https://で始まる正しいURLを入力してください"
-                         }
-                       })}
-                       placeholder="https://tiktok.com/@user"
-                     />
-                   </div>
+                  <div>
+                    <Label htmlFor="tiktok_profile_url">TikTok URL</Label>
+                    <Input 
+                      id="tiktok_profile_url"
+                      {...register("tiktok_profile_url", {
+                        pattern: {
+                          value: /^https:\/\/.+/,
+                          message: "https://で始まる正しいURLを入力してください"
+                        }
+                      })}
+                      placeholder="https://tiktok.com/@user"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="apple_podcasts_url">Apple Podcasts URL</Label>
+                    <Input 
+                      id="apple_podcasts_url"
+                      {...register("apple_podcasts_url", {
+                        pattern: {
+                          value: /^https:\/\/.+/,
+                          message: "https://で始まる正しいURLを入力してください"
+                        }
+                      })}
+                      placeholder="https://podcasts.apple.com/podcast/id..."
+                    />
+                  </div>
                    <div>
                      <Label htmlFor="apple_podcasts_url">Apple Podcasts URL</Label>
                      <Input 
@@ -686,10 +699,10 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
      note_url: episode?.note_url || '',
      youtube_url: episode?.youtube_url || '',
      spotify_url: episode?.spotify_url || '',
-     instagram_url: episode?.instagram_url || '',
-     tiktok_url: episode?.tiktok_url || '',
-     apple_podcasts_url: episode?.apple_podcasts_url || '',
-     custom_url: episode?.custom_url || '',
+    instagram_url: episode?.instagram_url || '',
+    tiktok_url: episode?.tiktok_url || '',
+    apple_podcasts_url: episode?.apple_podcasts_url || '',
+    custom_url: episode?.custom_url || '',
      custom_platform_id: episode?.custom_platform_id || '',
      fallback_behavior: episode?.fallback_behavior || 'FALLBACK_TO_CHANNEL' as FallbackBehavior,
      status: episode?.status || 'DRAFT' as EpisodeStatus,
@@ -725,11 +738,11 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
        title: formData.title.trim() || null,
        note_url: formData.note_url.trim() || null,
        youtube_url: formData.youtube_url.trim() || null,
-       spotify_url: formData.spotify_url.trim() || null,
-       instagram_url: formData.instagram_url.trim() || null,
-       tiktok_url: formData.tiktok_url.trim() || null,
-       apple_podcasts_url: formData.apple_podcasts_url.trim() || null,
-       custom_url: formData.custom_url.trim() || null,
+      spotify_url: formData.spotify_url.trim() || null,
+      instagram_url: formData.instagram_url.trim() || null,
+      tiktok_url: formData.tiktok_url.trim() || null,
+      apple_podcasts_url: formData.apple_podcasts_url.trim() || null,
+      custom_url: formData.custom_url.trim() || null,
        custom_platform_id: formData.custom_platform_id || null,
        published_at: formData.published_at === '' ? null : formData.published_at
      };
@@ -813,12 +826,18 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
                 Instagram
               </span>
             </SelectItem>
-             <SelectItem value="TIKTOK">
-               <span className="flex items-center gap-2">
-                 <PlatformIcon iconName="FaTiktok" size={16} color="#000000" />
-                 TikTok
-               </span>
-             </SelectItem>
+            <SelectItem value="TIKTOK">
+              <span className="flex items-center gap-2">
+                <PlatformIcon iconName="FaTiktok" size={16} color="#000000" />
+                TikTok
+              </span>
+            </SelectItem>
+            <SelectItem value="APPLEPODCASTS">
+              <span className="flex items-center gap-2">
+                <PlatformIcon iconName="SiApplepodcasts" size={16} color="#9933CC" />
+                Apple Podcasts
+              </span>
+            </SelectItem>
              <SelectItem value="APPLEPODCASTS">
                <span className="flex items-center gap-2">
                  <PlatformIcon iconName="SiApplepodcasts" size={16} color="#9933CC" />
@@ -912,15 +931,35 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
           />
         </div>
         
-         <div>
-           <Label htmlFor="tiktok_url" className="text-sm text-muted-foreground">TikTok URL</Label>
-           <Input
-             id="tiktok_url"
-             value={formData.tiktok_url}
-             onChange={(e) => setFormData(prev => ({ ...prev, tiktok_url: e.target.value }))}
-             placeholder="https://tiktok.com/@username/video/..."
-           />
-         </div>
+        <div>
+          <Label htmlFor="tiktok_url" className="text-sm text-muted-foreground">TikTok URL</Label>
+          <Input
+            id="tiktok_url"
+            value={formData.tiktok_url}
+            onChange={(e) => setFormData(prev => ({ ...prev, tiktok_url: e.target.value }))}
+            placeholder="https://tiktok.com/@username/video/..."
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="apple_podcasts_url" className="text-sm text-muted-foreground">Apple Podcasts URL</Label>
+          <Input
+            id="apple_podcasts_url"
+            value={formData.apple_podcasts_url}
+            onChange={(e) => setFormData(prev => ({ ...prev, apple_podcasts_url: e.target.value }))}
+            placeholder="https://podcasts.apple.com/podcast/id..."
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="apple_podcasts_url" className="text-sm text-muted-foreground">Apple Podcasts URL</Label>
+          <Input
+            id="apple_podcasts_url"
+            value={formData.apple_podcasts_url}
+            onChange={(e) => setFormData(prev => ({ ...prev, apple_podcasts_url: e.target.value }))}
+            placeholder="https://podcasts.apple.com/podcast/id..."
+          />
+        </div>
          
          <div>
            <Label htmlFor="apple_podcasts_url" className="text-sm text-muted-foreground">Apple Podcasts URL</Label>
