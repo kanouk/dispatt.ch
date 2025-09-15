@@ -91,6 +91,7 @@ export type Database = {
       }
       episodes: {
         Row: {
+          apple_podcasts_url: string | null
           created_at: string
           custom_platform_id: string | null
           custom_url: string | null
@@ -110,6 +111,7 @@ export type Database = {
           youtube_url: string | null
         }
         Insert: {
+          apple_podcasts_url?: string | null
           created_at?: string
           custom_platform_id?: string | null
           custom_url?: string | null
@@ -129,6 +131,7 @@ export type Database = {
           youtube_url?: string | null
         }
         Update: {
+          apple_podcasts_url?: string | null
           created_at?: string
           custom_platform_id?: string | null
           custom_url?: string | null
@@ -166,6 +169,7 @@ export type Database = {
       }
       services: {
         Row: {
+          apple_podcasts_url: string | null
           created_at: string
           default_platform: Database["public"]["Enums"]["app_platform"]
           id: string
@@ -180,6 +184,7 @@ export type Database = {
           youtube_channel_url: string | null
         }
         Insert: {
+          apple_podcasts_url?: string | null
           created_at?: string
           default_platform: Database["public"]["Enums"]["app_platform"]
           id?: string
@@ -194,6 +199,7 @@ export type Database = {
           youtube_channel_url?: string | null
         }
         Update: {
+          apple_podcasts_url?: string | null
           created_at?: string
           default_platform?: Database["public"]["Enums"]["app_platform"]
           id?: string
@@ -333,6 +339,7 @@ export type Database = {
         | "INSTAGRAM"
         | "CUSTOM"
         | "TIKTOK"
+        | "APPLEPODCASTS"
       episode_status: "DRAFT" | "LIVE" | "ARCHIVED"
       fallback_behavior: "COMING_SOON" | "FALLBACK_TO_CHANNEL"
       user_role: "admin" | "user"
@@ -470,6 +477,7 @@ export const Constants = {
         "INSTAGRAM",
         "CUSTOM",
         "TIKTOK",
+        "APPLEPODCASTS",
       ],
       episode_status: ["DRAFT", "LIVE", "ARCHIVED"],
       fallback_behavior: ["COMING_SOON", "FALLBACK_TO_CHANNEL"],

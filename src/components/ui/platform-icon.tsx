@@ -7,6 +7,7 @@ import {
   FaGlobe,
   FaStickyNote
 } from 'react-icons/fa';
+import { SiApplepodcasts } from 'react-icons/si';
 import { cn } from '@/lib/utils';
 
 interface PlatformIconProps {
@@ -22,6 +23,7 @@ const iconMap = {
   FaInstagram,
   FaSpotify,
   FaStickyNote,
+  SiApplepodcasts,
   FaGlobe, // fallback icon
 };
 

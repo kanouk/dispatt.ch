@@ -1,4 +1,4 @@
-export type AppPlatform = 'NOTE' | 'YOUTUBE' | 'SPOTIFY' | 'INSTAGRAM' | 'TIKTOK' | 'CUSTOM';
+export type AppPlatform = 'NOTE' | 'YOUTUBE' | 'SPOTIFY' | 'INSTAGRAM' | 'TIKTOK' | 'APPLEPODCASTS' | 'CUSTOM';
 export type FallbackBehavior = 'COMING_SOON' | 'FALLBACK_TO_CHANNEL';
 export type EpisodeStatus = 'DRAFT' | 'LIVE' | 'ARCHIVED';
 
@@ -12,6 +12,7 @@ export interface Service {
   spotify_show_url?: string;
   instagram_profile_url?: string;
   tiktok_profile_url?: string;
+  apple_podcasts_url?: string;
   user_id: string;
   created_at: string;
   updated_at: string;
@@ -28,6 +29,7 @@ export interface Episode {
   spotify_url?: string;
   instagram_url?: string;
   tiktok_url?: string;
+  apple_podcasts_url?: string;
   custom_url?: string;
   custom_platform_id?: string;
   fallback_behavior: FallbackBehavior;

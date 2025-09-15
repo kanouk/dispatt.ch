@@ -181,14 +181,15 @@ const Services = () => {
   };
 
   const getPlatformLabel = (platform: AppPlatform, customPlatformId?: string) => {
-    const configs = {
-      NOTE: { icon: 'FaStickyNote', label: 'Note', color: '#41C9B4' },
-      YOUTUBE: { icon: 'FaYoutube', label: 'YouTube', color: '#FF0000' },
-      SPOTIFY: { icon: 'FaSpotify', label: 'Spotify', color: '#1DB954' },
-      INSTAGRAM: { icon: 'FaInstagram', label: 'Instagram', color: '#E4405F' },
-      TIKTOK: { icon: 'FaTiktok', label: 'TikTok', color: '#000000' },
-      CUSTOM: { icon: 'FaGlobe', label: 'Custom', color: '#6B7280' }
-    };
+     const configs = {
+       NOTE: { icon: 'FaStickyNote', label: 'Note', color: '#41C9B4' },
+       YOUTUBE: { icon: 'FaYoutube', label: 'YouTube', color: '#FF0000' },
+       SPOTIFY: { icon: 'FaSpotify', label: 'Spotify', color: '#1DB954' },
+       INSTAGRAM: { icon: 'FaInstagram', label: 'Instagram', color: '#E4405F' },
+       TIKTOK: { icon: 'FaTiktok', label: 'TikTok', color: '#000000' },
+       APPLEPODCASTS: { icon: 'SiApplepodcasts', label: 'Apple Podcasts', color: '#9933CC' },
+       CUSTOM: { icon: 'FaGlobe', label: 'Custom', color: '#6B7280' }
+     };
     
     // カスタムプラットフォームの場合、ユーザー設定を使用
     if (platform === 'CUSTOM' && customPlatformId) {
@@ -287,10 +288,10 @@ const Services = () => {
                   <SelectTrigger>
                     <SelectValue placeholder="プラットフォームを選択" />
                   </SelectTrigger>
-                  <SelectContent>
-                    {(['NOTE', 'YOUTUBE', 'SPOTIFY', 'INSTAGRAM', 'TIKTOK'] as AppPlatform[]).map((value) => (
-                      <SelectItem key={value} value={value}>{getPlatformLabel(value)}</SelectItem>
-                    ))}
+                   <SelectContent>
+                     {(['NOTE', 'YOUTUBE', 'SPOTIFY', 'INSTAGRAM', 'TIKTOK', 'APPLEPODCASTS'] as AppPlatform[]).map((value) => (
+                       <SelectItem key={value} value={value}>{getPlatformLabel(value)}</SelectItem>
+                     ))}
                     {userPlatforms.map((platform) => (
                       <SelectItem key={`custom-${platform.id}`} value="CUSTOM">
                         <span className="flex items-center gap-1">
@@ -362,19 +363,32 @@ const Services = () => {
                       placeholder="https://instagram.com/user"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="tiktok_profile_url">TikTok URL</Label>
-                    <Input 
-                      id="tiktok_profile_url"
-                      {...register("tiktok_profile_url", {
-                        pattern: {
-                          value: /^https:\/\/.+/,
-                          message: "https://で始まる正しいURLを入力してください"
-                        }
-                      })}
-                      placeholder="https://tiktok.com/@user"
-                    />
-                  </div>
+                   <div>
+                     <Label htmlFor="tiktok_profile_url">TikTok URL</Label>
+                     <Input 
+                       id="tiktok_profile_url"
+                       {...register("tiktok_profile_url", {
+                         pattern: {
+                           value: /^https:\/\/.+/,
+                           message: "https://で始まる正しいURLを入力してください"
+                         }
+                       })}
+                       placeholder="https://tiktok.com/@user"
+                     />
+                   </div>
+                   <div>
+                     <Label htmlFor="apple_podcasts_url">Apple Podcasts URL</Label>
+                     <Input 
+                       id="apple_podcasts_url"
+                       {...register("apple_podcasts_url", {
+                         pattern: {
+                           value: /^https:\/\/.+/,
+                           message: "https://で始まる正しいURLを入力してください"
+                         }
+                       })}
+                       placeholder="https://podcasts.apple.com/podcast/id..."
+                     />
+                   </div>
                 </div>
               </div>
 
@@ -665,21 +679,22 @@ interface EpisodeFormProps {
 
 const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel }: EpisodeFormProps) => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    ep_no: episode?.ep_no || 1,
-    title: episode?.title || '',
-    default_platform: episode?.default_platform || service?.default_platform || 'NOTE' as AppPlatform,
-    note_url: episode?.note_url || '',
-    youtube_url: episode?.youtube_url || '',
-    spotify_url: episode?.spotify_url || '',
-    instagram_url: episode?.instagram_url || '',
-    tiktok_url: episode?.tiktok_url || '',
-    custom_url: episode?.custom_url || '',
-    custom_platform_id: episode?.custom_platform_id || '',
-    fallback_behavior: episode?.fallback_behavior || 'FALLBACK_TO_CHANNEL' as FallbackBehavior,
-    status: episode?.status || 'DRAFT' as EpisodeStatus,
-    published_at: episode?.published_at || null,
-  });
+   const [formData, setFormData] = useState({
+     ep_no: episode?.ep_no || 1,
+     title: episode?.title || '',
+     default_platform: episode?.default_platform || service?.default_platform || 'NOTE' as AppPlatform,
+     note_url: episode?.note_url || '',
+     youtube_url: episode?.youtube_url || '',
+     spotify_url: episode?.spotify_url || '',
+     instagram_url: episode?.instagram_url || '',
+     tiktok_url: episode?.tiktok_url || '',
+     apple_podcasts_url: episode?.apple_podcasts_url || '',
+     custom_url: episode?.custom_url || '',
+     custom_platform_id: episode?.custom_platform_id || '',
+     fallback_behavior: episode?.fallback_behavior || 'FALLBACK_TO_CHANNEL' as FallbackBehavior,
+     status: episode?.status || 'DRAFT' as EpisodeStatus,
+     published_at: episode?.published_at || null,
+   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -704,19 +719,20 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
       }
     }
     
-    // 空文字列をnullに変換
-    const cleanedData = {
-      ...formData,
-      title: formData.title.trim() || null,
-      note_url: formData.note_url.trim() || null,
-      youtube_url: formData.youtube_url.trim() || null,
-      spotify_url: formData.spotify_url.trim() || null,
-      instagram_url: formData.instagram_url.trim() || null,
-      tiktok_url: formData.tiktok_url.trim() || null,
-      custom_url: formData.custom_url.trim() || null,
-      custom_platform_id: formData.custom_platform_id || null,
-      published_at: formData.published_at === '' ? null : formData.published_at
-    };
+     // 空文字列をnullに変換
+     const cleanedData = {
+       ...formData,
+       title: formData.title.trim() || null,
+       note_url: formData.note_url.trim() || null,
+       youtube_url: formData.youtube_url.trim() || null,
+       spotify_url: formData.spotify_url.trim() || null,
+       instagram_url: formData.instagram_url.trim() || null,
+       tiktok_url: formData.tiktok_url.trim() || null,
+       apple_podcasts_url: formData.apple_podcasts_url.trim() || null,
+       custom_url: formData.custom_url.trim() || null,
+       custom_platform_id: formData.custom_platform_id || null,
+       published_at: formData.published_at === '' ? null : formData.published_at
+     };
     onSubmit(cleanedData);
   };
 
@@ -797,12 +813,18 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
                 Instagram
               </span>
             </SelectItem>
-            <SelectItem value="TIKTOK">
-              <span className="flex items-center gap-2">
-                <PlatformIcon iconName="FaTiktok" size={16} color="#000000" />
-                TikTok
-              </span>
-            </SelectItem>
+             <SelectItem value="TIKTOK">
+               <span className="flex items-center gap-2">
+                 <PlatformIcon iconName="FaTiktok" size={16} color="#000000" />
+                 TikTok
+               </span>
+             </SelectItem>
+             <SelectItem value="APPLEPODCASTS">
+               <span className="flex items-center gap-2">
+                 <PlatformIcon iconName="SiApplepodcasts" size={16} color="#9933CC" />
+                 Apple Podcasts
+               </span>
+             </SelectItem>
             <SelectItem value="CUSTOM">
               <span className="flex items-center gap-2">
                 <PlatformIcon iconName="FaGlobe" size={16} color="#6B7280" />
@@ -890,15 +912,25 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
           />
         </div>
         
-        <div>
-          <Label htmlFor="tiktok_url" className="text-sm text-muted-foreground">TikTok URL</Label>
-          <Input
-            id="tiktok_url"
-            value={formData.tiktok_url}
-            onChange={(e) => setFormData(prev => ({ ...prev, tiktok_url: e.target.value }))}
-            placeholder="https://tiktok.com/@username/video/..."
-          />
-        </div>
+         <div>
+           <Label htmlFor="tiktok_url" className="text-sm text-muted-foreground">TikTok URL</Label>
+           <Input
+             id="tiktok_url"
+             value={formData.tiktok_url}
+             onChange={(e) => setFormData(prev => ({ ...prev, tiktok_url: e.target.value }))}
+             placeholder="https://tiktok.com/@username/video/..."
+           />
+         </div>
+         
+         <div>
+           <Label htmlFor="apple_podcasts_url" className="text-sm text-muted-foreground">Apple Podcasts URL</Label>
+           <Input
+             id="apple_podcasts_url"
+             value={formData.apple_podcasts_url}
+             onChange={(e) => setFormData(prev => ({ ...prev, apple_podcasts_url: e.target.value }))}
+             placeholder="https://podcasts.apple.com/podcast/id..."
+           />
+         </div>
         
         {formData.default_platform === 'CUSTOM' && (
           <div>
