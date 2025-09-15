@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -129,6 +129,30 @@ export const PlatformManager = () => {
     });
   };
 
+  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, platform_name: e.target.value }));
+  }, []);
+
+  const handleSlugChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, platform_slug: e.target.value.toLowerCase() }));
+  }, []);
+
+  const handleIconChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, platform_icon: e.target.value }));
+  }, []);
+
+  const handleColorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, platform_color: e.target.value }));
+  }, []);
+
+  const handleUrlTemplateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, url_template: e.target.value }));
+  }, []);
+
+  const handleEnabledChange = useCallback((checked: boolean) => {
+    setFormData(prev => ({ ...prev, is_enabled: checked }));
+  }, []);
+
   const PlatformForm = ({ onSubmit, submitLabel }: { onSubmit: () => void; submitLabel: string }) => (
     <div className="space-y-4">
       <div>
@@ -136,7 +160,7 @@ export const PlatformManager = () => {
         <Input
           id="platform_name"
           value={formData.platform_name}
-          onChange={(e) => setFormData({ ...formData, platform_name: e.target.value })}
+          onChange={handleNameChange}
           placeholder="例: TikTok"
         />
       </div>
@@ -146,7 +170,7 @@ export const PlatformManager = () => {
         <Input
           id="platform_slug"
           value={formData.platform_slug}
-          onChange={(e) => setFormData({ ...formData, platform_slug: e.target.value.toLowerCase() })}
+          onChange={handleSlugChange}
           placeholder="例: tiktok"
         />
       </div>
@@ -156,7 +180,7 @@ export const PlatformManager = () => {
         <Input
           id="platform_icon"
           value={formData.platform_icon}
-          onChange={(e) => setFormData({ ...formData, platform_icon: e.target.value })}
+          onChange={handleIconChange}
           placeholder="例: FaYoutube, FaInstagram, SiNote"
         />
         <div className="mt-2 flex items-center space-x-2">
@@ -175,7 +199,7 @@ export const PlatformManager = () => {
           id="platform_color"
           type="color"
           value={formData.platform_color}
-          onChange={(e) => setFormData({ ...formData, platform_color: e.target.value })}
+          onChange={handleColorChange}
         />
       </div>
       
@@ -184,7 +208,7 @@ export const PlatformManager = () => {
         <Input
           id="url_template"
           value={formData.url_template}
-          onChange={(e) => setFormData({ ...formData, url_template: e.target.value })}
+          onChange={handleUrlTemplateChange}
           placeholder="例: https://tiktok.com/@username"
         />
       </div>
@@ -193,7 +217,7 @@ export const PlatformManager = () => {
         <Switch
           id="is_enabled"
           checked={formData.is_enabled}
-          onCheckedChange={(checked) => setFormData({ ...formData, is_enabled: checked })}
+          onCheckedChange={handleEnabledChange}
         />
         <Label htmlFor="is_enabled">有効</Label>
       </div>
