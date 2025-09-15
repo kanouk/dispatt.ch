@@ -284,6 +284,28 @@ export type Database = {
         Args: Record<PropertyKey, never> | { target_user_id: string }
         Returns: undefined
       }
+      get_public_episode_info: {
+        Args: { episode_number: number; service_slug: string }
+        Returns: {
+          custom_url: string
+          default_platform: Database["public"]["Enums"]["app_platform"]
+          fallback_behavior: Database["public"]["Enums"]["fallback_behavior"]
+          instagram_url: string
+          note_url: string
+          spotify_url: string
+          status: Database["public"]["Enums"]["episode_status"]
+          title: string
+          youtube_url: string
+        }[]
+      }
+      get_public_service_info: {
+        Args: { service_slug: string }
+        Returns: {
+          default_platform: Database["public"]["Enums"]["app_platform"]
+          name: string
+          slug: string
+        }[]
+      }
       get_service_display_info: {
         Args: { service_slug: string }
         Returns: {
