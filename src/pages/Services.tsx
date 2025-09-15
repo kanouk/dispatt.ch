@@ -2,6 +2,7 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { useState, useMemo } from "react";
 import { useServices, useCreateService, useUpdateService, useDeleteService } from "@/hooks/useServices";
 import { useEpisodes, useCreateEpisode, useUpdateEpisode, useDeleteEpisode } from "@/hooks/useEpisodes";
+import { useUserPlatforms } from "@/hooks/useUserPlatforms";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Check, X, Search, ExternalLink, Copy, ChevronRight, ChevronDown } from "lucide-react";
 import { getPublicUrl } from "@/utils/url";
 import { PlatformIcon } from "@/components/ui/platform-icon";
-import type { Service, Episode, AppPlatform, EpisodeStatus, FallbackBehavior } from "@/types/database";
+import type { Service, Episode, AppPlatform, EpisodeStatus, FallbackBehavior, UserPlatform } from "@/types/database";
 
 const Services = () => {
   const [editingService, setEditingService] = useState<Service | null>(null);
@@ -27,6 +28,7 @@ const Services = () => {
   const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
   
   const { data: services, isLoading } = useServices();
+  const { data: userPlatforms = [] } = useUserPlatforms();
   const createService = useCreateService();
   const updateService = useUpdateService();
   const deleteService = useDeleteService();
@@ -178,19 +180,37 @@ const Services = () => {
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
-  const getPlatformLabel = (platform: AppPlatform) => {
+  const getPlatformLabel = (platform: AppPlatform, customPlatformId?: string) => {
     const configs = {
-      NOTE: { icon: 'FaStickyNote', label: 'Note' },
-      YOUTUBE: { icon: 'FaYoutube', label: 'YouTube' },
-      SPOTIFY: { icon: 'FaSpotify', label: 'Spotify' },
-      INSTAGRAM: { icon: 'FaInstagram', label: 'Instagram' },
-      TIKTOK: { icon: 'FaTiktok', label: 'TikTok' },
-      CUSTOM: { icon: 'FaGlobe', label: 'Custom' }
+      NOTE: { icon: 'FaStickyNote', label: 'Note', color: '#41C9B4' },
+      YOUTUBE: { icon: 'FaYoutube', label: 'YouTube', color: '#FF0000' },
+      SPOTIFY: { icon: 'FaSpotify', label: 'Spotify', color: '#1DB954' },
+      INSTAGRAM: { icon: 'FaInstagram', label: 'Instagram', color: '#E4405F' },
+      TIKTOK: { icon: 'FaTiktok', label: 'TikTok', color: '#000000' },
+      CUSTOM: { icon: 'FaGlobe', label: 'Custom', color: '#6B7280' }
     };
+    
+    // カスタムプラットフォームの場合、ユーザー設定を使用
+    if (platform === 'CUSTOM' && customPlatformId) {
+      const customPlatform = userPlatforms.find(p => p.id === customPlatformId);
+      if (customPlatform) {
+        return (
+          <span className="flex items-center gap-1">
+            <PlatformIcon 
+              iconName={customPlatform.platform_icon || 'FaGlobe'} 
+              size={16} 
+              color={customPlatform.platform_color || '#6B7280'}
+            />
+            {customPlatform.platform_name}
+          </span>
+        );
+      }
+    }
+    
     const config = configs[platform];
     return (
       <span className="flex items-center gap-1">
-        <PlatformIcon iconName={config.icon} size={16} />
+        <PlatformIcon iconName={config.icon} size={16} color={config.color} />
         {config.label}
       </span>
     );
@@ -268,8 +288,20 @@ const Services = () => {
                     <SelectValue placeholder="プラットフォームを選択" />
                   </SelectTrigger>
                   <SelectContent>
-                    {(['NOTE', 'YOUTUBE', 'SPOTIFY', 'INSTAGRAM', 'TIKTOK', 'CUSTOM'] as AppPlatform[]).map((value) => (
+                    {(['NOTE', 'YOUTUBE', 'SPOTIFY', 'INSTAGRAM', 'TIKTOK'] as AppPlatform[]).map((value) => (
                       <SelectItem key={value} value={value}>{getPlatformLabel(value)}</SelectItem>
+                    ))}
+                    {userPlatforms.map((platform) => (
+                      <SelectItem key={`custom-${platform.id}`} value="CUSTOM">
+                        <span className="flex items-center gap-1">
+                          <PlatformIcon 
+                            iconName={platform.platform_icon || 'FaGlobe'} 
+                            size={16} 
+                            color={platform.platform_color || '#6B7280'}
+                          />
+                          {platform.platform_name}
+                        </span>
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -483,6 +515,7 @@ const Services = () => {
                 </DialogHeader>
                 <EpisodeForm
                   service={selectedService}
+                  userPlatforms={userPlatforms}
                   onSubmit={(data) => handleCreateEpisode({ ...data, service_id: selectedServiceId })}
                   onCancel={() => setIsEpisodeDialogOpen(false)}
                 />
@@ -505,6 +538,7 @@ const Services = () => {
                     <TableRow>
                       <TableHead>エピソード番号</TableHead>
                       <TableHead>タイトル</TableHead>
+                      <TableHead>プラットフォーム</TableHead>
                       <TableHead>ステータス</TableHead>
                       <TableHead>公開日</TableHead>
                       <TableHead>アクション</TableHead>
@@ -515,6 +549,7 @@ const Services = () => {
                       <TableRow key={episode.id}>
                         <TableCell className="font-medium">#{episode.ep_no}</TableCell>
                         <TableCell>{episode.title || '無題'}</TableCell>
+                        <TableCell>{getPlatformLabel(episode.default_platform, episode.custom_platform_id)}</TableCell>
                         <TableCell>{getStatusBadge(episode.status)}</TableCell>
                         <TableCell>
                           {episode.published_at 
@@ -609,6 +644,7 @@ const Services = () => {
             <EpisodeForm
               service={selectedService}
               episode={editingEpisode}
+              userPlatforms={userPlatforms}
               onSubmit={(data) => handleUpdateEpisode({ ...data, id: editingEpisode.id })}
               onCancel={() => setEditingEpisode(null)}
             />
@@ -622,11 +658,12 @@ const Services = () => {
 interface EpisodeFormProps {
   service?: Service;
   episode?: Episode | null;
+  userPlatforms?: UserPlatform[];
   onSubmit: (data: any) => void;
   onCancel: () => void;
 }
 
-const EpisodeForm = ({ service, episode, onSubmit, onCancel }: EpisodeFormProps) => {
+const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel }: EpisodeFormProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     ep_no: episode?.ep_no || 1,
@@ -637,6 +674,7 @@ const EpisodeForm = ({ service, episode, onSubmit, onCancel }: EpisodeFormProps)
     spotify_url: episode?.spotify_url || '',
     instagram_url: episode?.instagram_url || '',
     custom_url: episode?.custom_url || '',
+    custom_platform_id: episode?.custom_platform_id || '',
     fallback_behavior: episode?.fallback_behavior || 'FALLBACK_TO_CHANNEL' as FallbackBehavior,
     status: episode?.status || 'DRAFT' as EpisodeStatus,
     published_at: episode?.published_at || null,
@@ -645,14 +683,24 @@ const EpisodeForm = ({ service, episode, onSubmit, onCancel }: EpisodeFormProps)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // カスタムURLのバリデーション
-    if (formData.default_platform === 'CUSTOM' && !formData.custom_url.trim()) {
-      toast({
-        title: "エラー",
-        description: "デフォルトプラットフォームがカスタムの場合、カスタムURLは必須です",
-        variant: "destructive",
-      });
-      return;
+    // カスタムプラットフォームのバリデーション
+    if (formData.default_platform === 'CUSTOM') {
+      if (!formData.custom_platform_id) {
+        toast({
+          title: "エラー",
+          description: "カスタムプラットフォームを選択してください",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!formData.custom_url.trim()) {
+        toast({
+          title: "エラー",
+          description: "カスタムURLは必須です",
+          variant: "destructive",
+        });
+        return;
+      }
     }
     
     // 空文字列をnullに変換
@@ -664,6 +712,7 @@ const EpisodeForm = ({ service, episode, onSubmit, onCancel }: EpisodeFormProps)
       spotify_url: formData.spotify_url.trim() || null,
       instagram_url: formData.instagram_url.trim() || null,
       custom_url: formData.custom_url.trim() || null,
+      custom_platform_id: formData.custom_platform_id || null,
       published_at: formData.published_at === '' ? null : formData.published_at
     };
     onSubmit(cleanedData);
@@ -711,19 +760,84 @@ const EpisodeForm = ({ service, episode, onSubmit, onCancel }: EpisodeFormProps)
 
       <div>
         <Label htmlFor="default_platform">デフォルトプラットフォーム</Label>
-        <Select value={formData.default_platform} onValueChange={(value) => setFormData(prev => ({ ...prev, default_platform: value as AppPlatform }))}>
+        <Select value={formData.default_platform} onValueChange={(value) => {
+          setFormData(prev => ({ 
+            ...prev, 
+            default_platform: value as AppPlatform,
+            custom_platform_id: value === 'CUSTOM' ? '' : prev.custom_platform_id
+          }));
+        }}>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="NOTE">note</SelectItem>
-            <SelectItem value="YOUTUBE">YouTube</SelectItem>
-            <SelectItem value="SPOTIFY">Spotify</SelectItem>
-            <SelectItem value="INSTAGRAM">Instagram</SelectItem>
-            <SelectItem value="CUSTOM">カスタム</SelectItem>
+            <SelectItem value="NOTE">
+              <span className="flex items-center gap-2">
+                <PlatformIcon iconName="FaStickyNote" size={16} color="#41C9B4" />
+                note
+              </span>
+            </SelectItem>
+            <SelectItem value="YOUTUBE">
+              <span className="flex items-center gap-2">
+                <PlatformIcon iconName="FaYoutube" size={16} color="#FF0000" />
+                YouTube
+              </span>
+            </SelectItem>
+            <SelectItem value="SPOTIFY">
+              <span className="flex items-center gap-2">
+                <PlatformIcon iconName="FaSpotify" size={16} color="#1DB954" />
+                Spotify
+              </span>
+            </SelectItem>
+            <SelectItem value="INSTAGRAM">
+              <span className="flex items-center gap-2">
+                <PlatformIcon iconName="FaInstagram" size={16} color="#E4405F" />
+                Instagram
+              </span>
+            </SelectItem>
+            <SelectItem value="CUSTOM">
+              <span className="flex items-center gap-2">
+                <PlatformIcon iconName="FaGlobe" size={16} color="#6B7280" />
+                カスタム
+              </span>
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
+
+      {formData.default_platform === 'CUSTOM' && (
+        <div>
+          <Label htmlFor="custom_platform_id">カスタムプラットフォーム</Label>
+          <Select value={formData.custom_platform_id} onValueChange={(value) => {
+            const selectedPlatform = userPlatforms.find(p => p.id === value);
+            setFormData(prev => ({ 
+              ...prev, 
+              custom_platform_id: value,
+              custom_url: selectedPlatform?.url_template ? 
+                selectedPlatform.url_template.replace('{username}', '').replace('{show_id}', '') : 
+                prev.custom_url
+            }));
+          }}>
+            <SelectTrigger>
+              <SelectValue placeholder="カスタムプラットフォームを選択" />
+            </SelectTrigger>
+            <SelectContent>
+              {userPlatforms.map((platform) => (
+                <SelectItem key={platform.id} value={platform.id}>
+                  <span className="flex items-center gap-2">
+                    <PlatformIcon 
+                      iconName={platform.platform_icon || 'FaGlobe'} 
+                      size={16} 
+                      color={platform.platform_color || '#6B7280'}
+                    />
+                    {platform.platform_name}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
       <div className="space-y-3">
         <Label>プラットフォーム別URL</Label>
@@ -768,15 +882,27 @@ const EpisodeForm = ({ service, episode, onSubmit, onCancel }: EpisodeFormProps)
           />
         </div>
         
-        <div>
-          <Label htmlFor="custom_url" className="text-sm text-muted-foreground">カスタム URL</Label>
-          <Input
-            id="custom_url"
-            value={formData.custom_url}
-            onChange={(e) => setFormData(prev => ({ ...prev, custom_url: e.target.value }))}
-            placeholder="https://..."
-          />
-        </div>
+        {formData.default_platform === 'CUSTOM' && (
+          <div>
+            <Label htmlFor="custom_url" className="text-sm text-muted-foreground">
+              カスタム URL
+              {formData.custom_platform_id && (() => {
+                const platform = userPlatforms.find(p => p.id === formData.custom_platform_id);
+                return platform?.url_template ? (
+                  <span className="text-xs text-muted-foreground ml-2">
+                    (テンプレート: {platform.url_template})
+                  </span>
+                ) : null;
+              })()}
+            </Label>
+            <Input
+              id="custom_url"
+              value={formData.custom_url}
+              onChange={(e) => setFormData(prev => ({ ...prev, custom_url: e.target.value }))}
+              placeholder="https://..."
+            />
+          </div>
+        )}
       </div>
 
       <div>
