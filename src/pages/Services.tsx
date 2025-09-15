@@ -673,6 +673,7 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
     youtube_url: episode?.youtube_url || '',
     spotify_url: episode?.spotify_url || '',
     instagram_url: episode?.instagram_url || '',
+    tiktok_url: episode?.tiktok_url || '',
     custom_url: episode?.custom_url || '',
     custom_platform_id: episode?.custom_platform_id || '',
     fallback_behavior: episode?.fallback_behavior || 'FALLBACK_TO_CHANNEL' as FallbackBehavior,
@@ -711,6 +712,7 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
       youtube_url: formData.youtube_url.trim() || null,
       spotify_url: formData.spotify_url.trim() || null,
       instagram_url: formData.instagram_url.trim() || null,
+      tiktok_url: formData.tiktok_url.trim() || null,
       custom_url: formData.custom_url.trim() || null,
       custom_platform_id: formData.custom_platform_id || null,
       published_at: formData.published_at === '' ? null : formData.published_at
@@ -793,6 +795,12 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
               <span className="flex items-center gap-2">
                 <PlatformIcon iconName="FaInstagram" size={16} color="#E4405F" />
                 Instagram
+              </span>
+            </SelectItem>
+            <SelectItem value="TIKTOK">
+              <span className="flex items-center gap-2">
+                <PlatformIcon iconName="FaTiktok" size={16} color="#000000" />
+                TikTok
               </span>
             </SelectItem>
             <SelectItem value="CUSTOM">
@@ -879,6 +887,16 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
             value={formData.instagram_url}
             onChange={(e) => setFormData(prev => ({ ...prev, instagram_url: e.target.value }))}
             placeholder="https://instagram.com/p/..."
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="tiktok_url" className="text-sm text-muted-foreground">TikTok URL</Label>
+          <Input
+            id="tiktok_url"
+            value={formData.tiktok_url}
+            onChange={(e) => setFormData(prev => ({ ...prev, tiktok_url: e.target.value }))}
+            placeholder="https://tiktok.com/@username/video/..."
           />
         </div>
         
