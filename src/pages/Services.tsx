@@ -170,6 +170,19 @@ const Services = () => {
     }
   };
 
+  // Platform slug to AppPlatform mapping
+  const getAppPlatformFromSlug = (slug: string): AppPlatform | null => {
+    const mapping: Record<string, AppPlatform> = {
+      'youtube': 'YOUTUBE',
+      'note': 'NOTE', 
+      'tiktok': 'TIKTOK',
+      'instagram': 'INSTAGRAM',
+      'spotify': 'SPOTIFY',
+      'applepodcasts': 'APPLEPODCASTS'
+    };
+    return mapping[slug] || null;
+  };
+
   const getStatusBadge = (status: EpisodeStatus) => {
     const variants = {
       DRAFT: { variant: 'secondary' as const, label: '下書き' },
@@ -287,57 +300,42 @@ const Services = () => {
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="プラットフォームを選択" />
-                  </SelectTrigger>
-                   <SelectContent>
-                     <SelectItem value="NOTE">
-                       <span className="flex items-center gap-2">
-                         <PlatformIcon iconName="FaStickyNote" size={16} color="#41C9B4" />
-                         note
-                       </span>
-                     </SelectItem>
-                     <SelectItem value="YOUTUBE">
-                       <span className="flex items-center gap-2">
-                         <PlatformIcon iconName="FaYoutube" size={16} color="#FF0000" />
-                         YouTube
-                       </span>
-                     </SelectItem>
-                     <SelectItem value="SPOTIFY">
-                       <span className="flex items-center gap-2">
-                         <PlatformIcon iconName="FaSpotify" size={16} color="#1DB954" />
-                         Spotify
-                       </span>
-                     </SelectItem>
-                     <SelectItem value="INSTAGRAM">
-                       <span className="flex items-center gap-2">
-                         <PlatformIcon iconName="FaInstagram" size={16} color="#E4405F" />
-                         Instagram
-                       </span>
-                     </SelectItem>
-                     <SelectItem value="TIKTOK">
-                       <span className="flex items-center gap-2">
-                         <PlatformIcon iconName="FaTiktok" size={16} color="#000000" />
-                         TikTok
-                       </span>
-                     </SelectItem>
-                     <SelectItem value="APPLEPODCASTS">
-                       <span className="flex items-center gap-2">
-                         <PlatformIcon iconName="SiApplepodcasts" size={16} color="#9933CC" />
-                         Apple Podcasts
-                       </span>
-                     </SelectItem>
-                     {userPlatforms.map((platform) => (
-                       <SelectItem key={`custom-${platform.id}`} value="CUSTOM">
-                         <span className="flex items-center gap-2">
-                           <PlatformIcon 
-                             iconName={platform.platform_icon || 'FaGlobe'} 
-                             size={16} 
-                             color={platform.platform_color || '#6B7280'}
-                           />
-                           {platform.platform_name}
-                         </span>
-                       </SelectItem>
-                     ))}
-                   </SelectContent>
+                   </SelectTrigger>
+                    <SelectContent>
+                      {userPlatforms
+                        .filter(p => p.is_enabled)
+                        .sort((a, b) => a.display_order - b.display_order)
+                        .map((platform) => {
+                          const appPlatform = getAppPlatformFromSlug(platform.platform_slug);
+                          if (appPlatform) {
+                            return (
+                              <SelectItem key={platform.id} value={appPlatform}>
+                                <span className="flex items-center gap-2">
+                                  <PlatformIcon 
+                                    iconName={platform.platform_icon || 'FaGlobe'} 
+                                    size={16} 
+                                    color={platform.platform_color || '#6B7280'}
+                                  />
+                                  {platform.platform_name}
+                                </span>
+                              </SelectItem>
+                            );
+                          }
+                          return (
+                            <SelectItem key={platform.id} value="CUSTOM">
+                              <span className="flex items-center gap-2">
+                                <PlatformIcon 
+                                  iconName={platform.platform_icon || 'FaGlobe'} 
+                                  size={16} 
+                                  color={platform.platform_color || '#6B7280'}
+                                />
+                                {platform.platform_name}
+                              </span>
+                            </SelectItem>
+                          );
+                        })
+                      }
+                    </SelectContent>
                 </Select>
               </div>
 
@@ -717,6 +715,19 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
   const enabledPlatforms = userPlatforms
     .filter(p => p.is_enabled)
     .sort((a, b) => a.display_order - b.display_order);
+
+  // Platform slug to AppPlatform mapping
+  const getAppPlatformFromSlug = (slug: string): AppPlatform | null => {
+    const mapping: Record<string, AppPlatform> = {
+      'youtube': 'YOUTUBE',
+      'note': 'NOTE', 
+      'tiktok': 'TIKTOK',
+      'instagram': 'INSTAGRAM',
+      'spotify': 'SPOTIFY',
+      'applepodcasts': 'APPLEPODCASTS'
+    };
+    return mapping[slug] || null;
+  };
   
   // Create initial form data with dynamic platform URLs
   const createInitialFormData = () => {
@@ -841,48 +852,35 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="NOTE">
-              <span className="flex items-center gap-2">
-                <PlatformIcon iconName="FaStickyNote" size={16} color="#41C9B4" />
-                note
-              </span>
-            </SelectItem>
-            <SelectItem value="YOUTUBE">
-              <span className="flex items-center gap-2">
-                <PlatformIcon iconName="FaYoutube" size={16} color="#FF0000" />
-                YouTube
-              </span>
-            </SelectItem>
-            <SelectItem value="SPOTIFY">
-              <span className="flex items-center gap-2">
-                <PlatformIcon iconName="FaSpotify" size={16} color="#1DB954" />
-                Spotify
-              </span>
-            </SelectItem>
-            <SelectItem value="INSTAGRAM">
-              <span className="flex items-center gap-2">
-                <PlatformIcon iconName="FaInstagram" size={16} color="#E4405F" />
-                Instagram
-              </span>
-            </SelectItem>
-            <SelectItem value="TIKTOK">
-              <span className="flex items-center gap-2">
-                <PlatformIcon iconName="FaTiktok" size={16} color="#000000" />
-                TikTok
-              </span>
-            </SelectItem>
-            <SelectItem value="APPLEPODCASTS">
-              <span className="flex items-center gap-2">
-                <PlatformIcon iconName="SiApplepodcasts" size={16} color="#9933CC" />
-                Apple Podcasts
-              </span>
-            </SelectItem>
-            <SelectItem value="CUSTOM">
-              <span className="flex items-center gap-2">
-                <PlatformIcon iconName="FaGlobe" size={16} color="#6B7280" />
-                カスタム
-              </span>
-            </SelectItem>
+            {enabledPlatforms.map((platform) => {
+              const appPlatform = getAppPlatformFromSlug(platform.platform_slug);
+              if (appPlatform) {
+                return (
+                  <SelectItem key={platform.id} value={appPlatform}>
+                    <span className="flex items-center gap-2">
+                      <PlatformIcon 
+                        iconName={platform.platform_icon || 'FaGlobe'} 
+                        size={16} 
+                        color={platform.platform_color || '#6B7280'}
+                      />
+                      {platform.platform_name}
+                    </span>
+                  </SelectItem>
+                );
+              }
+              return (
+                <SelectItem key={platform.id} value="CUSTOM">
+                  <span className="flex items-center gap-2">
+                    <PlatformIcon 
+                      iconName={platform.platform_icon || 'FaGlobe'} 
+                      size={16} 
+                      color={platform.platform_color || '#6B7280'}
+                    />
+                    {platform.platform_name}
+                  </span>
+                </SelectItem>
+              );
+            })}
           </SelectContent>
         </Select>
       </div>
