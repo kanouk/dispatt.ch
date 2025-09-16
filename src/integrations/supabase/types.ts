@@ -97,11 +97,13 @@ export type Database = {
           custom_platform_id: string | null
           custom_url: string | null
           default_platform: Database["public"]["Enums"]["app_platform"]
+          default_platform_id: string | null
           ep_no: number
           fallback_behavior: Database["public"]["Enums"]["fallback_behavior"]
           id: string
           instagram_url: string | null
           note_url: string | null
+          platform_urls: Json | null
           published_at: string | null
           service_id: string
           spotify_url: string | null
@@ -118,11 +120,13 @@ export type Database = {
           custom_platform_id?: string | null
           custom_url?: string | null
           default_platform: Database["public"]["Enums"]["app_platform"]
+          default_platform_id?: string | null
           ep_no: number
           fallback_behavior?: Database["public"]["Enums"]["fallback_behavior"]
           id?: string
           instagram_url?: string | null
           note_url?: string | null
+          platform_urls?: Json | null
           published_at?: string | null
           service_id: string
           spotify_url?: string | null
@@ -139,11 +143,13 @@ export type Database = {
           custom_platform_id?: string | null
           custom_url?: string | null
           default_platform?: Database["public"]["Enums"]["app_platform"]
+          default_platform_id?: string | null
           ep_no?: number
           fallback_behavior?: Database["public"]["Enums"]["fallback_behavior"]
           id?: string
           instagram_url?: string | null
           note_url?: string | null
+          platform_urls?: Json | null
           published_at?: string | null
           service_id?: string
           spotify_url?: string | null
@@ -157,6 +163,13 @@ export type Database = {
           {
             foreignKeyName: "episodes_custom_platform_id_fkey"
             columns: ["custom_platform_id"]
+            isOneToOne: false
+            referencedRelation: "user_platforms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "episodes_default_platform_id_fkey"
+            columns: ["default_platform_id"]
             isOneToOne: false
             referencedRelation: "user_platforms"
             referencedColumns: ["id"]
@@ -219,10 +232,12 @@ export type Database = {
           apple_podcasts_url: string | null
           created_at: string
           default_platform: Database["public"]["Enums"]["app_platform"]
+          default_platform_id: string | null
           id: string
           instagram_profile_url: string | null
           name: string
           note_home_url: string | null
+          platform_urls: Json | null
           slug: string
           spotify_show_url: string | null
           tiktok_profile_url: string | null
@@ -234,10 +249,12 @@ export type Database = {
           apple_podcasts_url?: string | null
           created_at?: string
           default_platform: Database["public"]["Enums"]["app_platform"]
+          default_platform_id?: string | null
           id?: string
           instagram_profile_url?: string | null
           name: string
           note_home_url?: string | null
+          platform_urls?: Json | null
           slug: string
           spotify_show_url?: string | null
           tiktok_profile_url?: string | null
@@ -249,10 +266,12 @@ export type Database = {
           apple_podcasts_url?: string | null
           created_at?: string
           default_platform?: Database["public"]["Enums"]["app_platform"]
+          default_platform_id?: string | null
           id?: string
           instagram_profile_url?: string | null
           name?: string
           note_home_url?: string | null
+          platform_urls?: Json | null
           slug?: string
           spotify_show_url?: string | null
           tiktok_profile_url?: string | null
@@ -260,7 +279,15 @@ export type Database = {
           user_id?: string
           youtube_channel_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "services_default_platform_id_fkey"
+            columns: ["default_platform_id"]
+            isOneToOne: false
+            referencedRelation: "user_platforms"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_platforms: {
         Row: {
@@ -336,6 +363,13 @@ export type Database = {
       create_default_user_platforms: {
         Args: Record<PropertyKey, never> | { target_user_id: string }
         Returns: undefined
+      }
+      get_default_platform_id: {
+        Args: {
+          platform_enum: Database["public"]["Enums"]["app_platform"]
+          user_uuid: string
+        }
+        Returns: string
       }
       get_public_episode_info: {
         Args: { episode_number: number; service_slug: string }
