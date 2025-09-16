@@ -9,6 +9,7 @@ import { useAllUserPlatforms, useCreateUserPlatform, useUpdateUserPlatform, useD
 import { Plus, Edit2, Trash2, GripVertical } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PlatformIcon } from '@/components/ui/platform-icon';
+import { IconSelector } from '@/components/ui/icon-selector';
 import type { UserPlatform } from '@/types/database';
 
 interface PlatformFormData {
@@ -131,8 +132,13 @@ export const PlatformManager = () => {
     setFormData(prev => ({ ...prev, platform_slug: e.target.value.toLowerCase() }));
   }, []);
 
-  const handleIconChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ ...prev, platform_icon: e.target.value }));
+  const handleIconChange = useCallback((iconName: string, iconColor: string, iconLabel: string) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      platform_icon: iconName,
+      platform_color: iconColor,
+      platform_name: prev.platform_name || iconLabel
+    }));
   }, []);
 
   const handleColorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,23 +175,10 @@ export const PlatformManager = () => {
         />
       </div>
       
-      <div>
-        <Label htmlFor="platform_icon">アイコン</Label>
-        <Input
-          id="platform_icon"
-          value={formData.platform_icon}
-          onChange={handleIconChange}
-          placeholder="例: FaYoutube, FaInstagram, SiNote"
-        />
-        <div className="mt-2 flex items-center space-x-2">
-          <span className="text-sm text-muted-foreground">プレビュー:</span>
-          <PlatformIcon 
-            iconName={formData.platform_icon || 'FaGlobe'} 
-            size={20}
-            color={formData.platform_color}
-          />
-        </div>
-      </div>
+      <IconSelector
+        value={formData.platform_icon}
+        onChange={handleIconChange}
+      />
       
       <div>
         <Label htmlFor="platform_color">カラー</Label>
