@@ -388,19 +388,6 @@ const Services = () => {
                       })}
                       placeholder="https://podcasts.apple.com/podcast/id..."
                     />
-                  </div>
-                   <div>
-                     <Label htmlFor="apple_podcasts_url">Apple Podcasts URL</Label>
-                     <Input 
-                       id="apple_podcasts_url"
-                       {...register("apple_podcasts_url", {
-                         pattern: {
-                           value: /^https:\/\/.+/,
-                           message: "https://で始まる正しいURLを入力してください"
-                         }
-                       })}
-                       placeholder="https://podcasts.apple.com/podcast/id..."
-                     />
                    </div>
                 </div>
               </div>
@@ -838,12 +825,6 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
                 Apple Podcasts
               </span>
             </SelectItem>
-             <SelectItem value="APPLEPODCASTS">
-               <span className="flex items-center gap-2">
-                 <PlatformIcon iconName="SiApplepodcasts" size={16} color="#9933CC" />
-                 Apple Podcasts
-               </span>
-             </SelectItem>
             <SelectItem value="CUSTOM">
               <span className="flex items-center gap-2">
                 <PlatformIcon iconName="FaGlobe" size={16} color="#6B7280" />
@@ -950,26 +931,6 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
             placeholder="https://podcasts.apple.com/podcast/id..."
           />
         </div>
-        
-        <div>
-          <Label htmlFor="apple_podcasts_url" className="text-sm text-muted-foreground">Apple Podcasts URL</Label>
-          <Input
-            id="apple_podcasts_url"
-            value={formData.apple_podcasts_url}
-            onChange={(e) => setFormData(prev => ({ ...prev, apple_podcasts_url: e.target.value }))}
-            placeholder="https://podcasts.apple.com/podcast/id..."
-          />
-        </div>
-         
-         <div>
-           <Label htmlFor="apple_podcasts_url" className="text-sm text-muted-foreground">Apple Podcasts URL</Label>
-           <Input
-             id="apple_podcasts_url"
-             value={formData.apple_podcasts_url}
-             onChange={(e) => setFormData(prev => ({ ...prev, apple_podcasts_url: e.target.value }))}
-             placeholder="https://podcasts.apple.com/podcast/id..."
-           />
-         </div>
         
         {formData.default_platform === 'CUSTOM' && (
           <div>

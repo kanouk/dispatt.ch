@@ -33,9 +33,7 @@ export const useAllUserPlatforms = () => {
       if (data.length === 0) {
         const { data: user } = await supabase.auth.getUser();
         if (user.user) {
-          await supabase.rpc('create_default_user_platforms', { 
-            target_user_id: user.user.id 
-          });
+          await supabase.rpc('create_default_user_platforms');
           
           // Fetch again after creating defaults
           const { data: newData, error: newError } = await supabase
@@ -126,9 +124,7 @@ export const useCreateDefaultPlatforms = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      const { error } = await supabase.rpc('create_default_user_platforms', {
-        target_user_id: user.id
-      });
+      const { error } = await supabase.rpc('create_default_user_platforms');
       
       if (error) throw error;
     },

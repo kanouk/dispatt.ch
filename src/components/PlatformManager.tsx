@@ -53,12 +53,6 @@ export const PlatformManager = () => {
     });
   };
 
-  // Auto-create default platforms if user has none
-  useEffect(() => {
-    if (!isLoading && platforms.length === 0) {
-      createDefaultMutation.mutate();
-    }
-  }, [platforms.length, isLoading, createDefaultMutation]);
 
   const handleCreate = async () => {
     try {
@@ -243,7 +237,7 @@ export const PlatformManager = () => {
               新規プラットフォーム
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
             <DialogHeader>
               <DialogTitle>新しいプラットフォームを作成</DialogTitle>
             </DialogHeader>
@@ -297,7 +291,7 @@ export const PlatformManager = () => {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingPlatform} onOpenChange={(open) => !open && setEditingPlatform(null)}>
-        <DialogContent>
+        <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>プラットフォームを編集</DialogTitle>
           </DialogHeader>
