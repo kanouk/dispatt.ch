@@ -44,6 +44,20 @@ const Redirect: React.FC = () => {
     }
   };
 
+  // プラットフォームのアイコン色マッピング
+  const getPlatformIconColor = (platform?: string) => {
+    switch (platform) {
+      case 'youtube': return '#FF0000';
+      case 'spotify': return '#1DB954';
+      case 'note': return '#41C9B4';
+      case 'apple': return '#A855F7';
+      case 'google': return '#4285F4';
+      case 'instagram': return '#E4405F';
+      case 'tiktok': return '#000000';
+      default: return 'hsl(var(--primary))';
+    }
+  };
+
   const platformName = getPlatformName(variant);
   const episodeNumber = epNo ? `第${epNo}話` : 'エピソード';
 
@@ -163,7 +177,7 @@ const Redirect: React.FC = () => {
                   {episodeNumber}: {episodeTitle}
                   <br />
                   <span className="inline-flex items-center gap-2 mt-2">
-                    <PlatformIcon iconName={getPlatformIconName(variant)} size={20} />
+                    <PlatformIcon iconName={getPlatformIconName(variant)} size={20} color={getPlatformIconColor(variant)} />
                     <span className="text-primary font-medium">{platformName}へ移動中</span>
                   </span>
                 </>
@@ -172,7 +186,7 @@ const Redirect: React.FC = () => {
                   <span>{episodeNumber}</span>
                   <br />
                   <span className="inline-flex items-center gap-2 mt-2">
-                    <PlatformIcon iconName={getPlatformIconName(variant)} size={20} />
+                    <PlatformIcon iconName={getPlatformIconName(variant)} size={20} color={getPlatformIconColor(variant)} />
                     <span className="text-primary font-medium">{platformName}へ移動中</span>
                   </span>
                 </>
