@@ -91,6 +91,7 @@ export type Database = {
       }
       episodes: {
         Row: {
+          alias: string | null
           apple_podcasts_url: string | null
           created_at: string
           custom_platform_id: string | null
@@ -111,6 +112,7 @@ export type Database = {
           youtube_url: string | null
         }
         Insert: {
+          alias?: string | null
           apple_podcasts_url?: string | null
           created_at?: string
           custom_platform_id?: string | null
@@ -131,6 +133,7 @@ export type Database = {
           youtube_url?: string | null
         }
         Update: {
+          alias?: string | null
           apple_podcasts_url?: string | null
           created_at?: string
           custom_platform_id?: string | null
@@ -160,6 +163,50 @@ export type Database = {
           },
           {
             foreignKeyName: "episodes_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_aliases: {
+        Row: {
+          alias: string
+          created_at: string
+          description: string | null
+          id: string
+          is_enabled: boolean
+          redirect_url: string
+          service_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alias: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_enabled?: boolean
+          redirect_url: string
+          service_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alias?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_enabled?: boolean
+          redirect_url?: string
+          service_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_aliases_service_id_fkey"
             columns: ["service_id"]
             isOneToOne: false
             referencedRelation: "services"

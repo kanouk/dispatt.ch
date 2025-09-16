@@ -23,6 +23,7 @@ export interface Episode {
   service_id: string;
   ep_no: number;
   title?: string;
+  alias?: string;
   default_platform: AppPlatform;
   note_url?: string;
   youtube_url?: string;
@@ -34,6 +35,18 @@ export interface Episode {
   fallback_behavior: FallbackBehavior;
   status: EpisodeStatus;
   published_at?: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ServiceAlias {
+  id: string;
+  service_id: string;
+  alias: string;
+  redirect_url: string;
+  description?: string;
+  is_enabled: boolean;
   user_id: string;
   created_at: string;
   updated_at: string;
