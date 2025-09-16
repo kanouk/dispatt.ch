@@ -289,22 +289,55 @@ const Services = () => {
                     <SelectValue placeholder="プラットフォームを選択" />
                   </SelectTrigger>
                    <SelectContent>
-                     {(['NOTE', 'YOUTUBE', 'SPOTIFY', 'INSTAGRAM', 'TIKTOK', 'APPLEPODCASTS'] as AppPlatform[]).map((value) => (
-                       <SelectItem key={value} value={value}>{getPlatformLabel(value)}</SelectItem>
+                     <SelectItem value="NOTE">
+                       <span className="flex items-center gap-2">
+                         <PlatformIcon iconName="FaStickyNote" size={16} color="#41C9B4" />
+                         note
+                       </span>
+                     </SelectItem>
+                     <SelectItem value="YOUTUBE">
+                       <span className="flex items-center gap-2">
+                         <PlatformIcon iconName="FaYoutube" size={16} color="#FF0000" />
+                         YouTube
+                       </span>
+                     </SelectItem>
+                     <SelectItem value="SPOTIFY">
+                       <span className="flex items-center gap-2">
+                         <PlatformIcon iconName="FaSpotify" size={16} color="#1DB954" />
+                         Spotify
+                       </span>
+                     </SelectItem>
+                     <SelectItem value="INSTAGRAM">
+                       <span className="flex items-center gap-2">
+                         <PlatformIcon iconName="FaInstagram" size={16} color="#E4405F" />
+                         Instagram
+                       </span>
+                     </SelectItem>
+                     <SelectItem value="TIKTOK">
+                       <span className="flex items-center gap-2">
+                         <PlatformIcon iconName="FaTiktok" size={16} color="#000000" />
+                         TikTok
+                       </span>
+                     </SelectItem>
+                     <SelectItem value="APPLEPODCASTS">
+                       <span className="flex items-center gap-2">
+                         <PlatformIcon iconName="SiApplepodcasts" size={16} color="#9933CC" />
+                         Apple Podcasts
+                       </span>
+                     </SelectItem>
+                     {userPlatforms.map((platform) => (
+                       <SelectItem key={`custom-${platform.id}`} value="CUSTOM">
+                         <span className="flex items-center gap-2">
+                           <PlatformIcon 
+                             iconName={platform.platform_icon || 'FaGlobe'} 
+                             size={16} 
+                             color={platform.platform_color || '#6B7280'}
+                           />
+                           {platform.platform_name}
+                         </span>
+                       </SelectItem>
                      ))}
-                    {userPlatforms.map((platform) => (
-                      <SelectItem key={`custom-${platform.id}`} value="CUSTOM">
-                        <span className="flex items-center gap-1">
-                          <PlatformIcon 
-                            iconName={platform.platform_icon || 'FaGlobe'} 
-                            size={16} 
-                            color={platform.platform_color || '#6B7280'}
-                          />
-                          {platform.platform_name}
-                        </span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
+                   </SelectContent>
                 </Select>
               </div>
 
