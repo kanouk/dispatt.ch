@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,6 +29,7 @@ export const PlatformManager = () => {
   const deleteMutation = useDeleteUserPlatform();
   const createDefaultMutation = useCreateDefaultPlatforms();
   const { toast } = useToast();
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingPlatform, setEditingPlatform] = useState<UserPlatform | null>(null);
@@ -158,10 +159,12 @@ export const PlatformManager = () => {
       <div>
         <Label htmlFor="platform_name">プラットフォーム名</Label>
         <Input
+          ref={nameInputRef}
           id="platform_name"
           value={formData.platform_name}
           onChange={handleNameChange}
           placeholder="例: TikTok"
+          autoFocus
         />
       </div>
       
@@ -230,7 +233,7 @@ export const PlatformManager = () => {
               新規プラットフォーム
             </Button>
           </DialogTrigger>
-          <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+          <DialogContent onOpenAutoFocus={() => nameInputRef.current?.focus()}>
             <DialogHeader>
               <DialogTitle>新しいプラットフォームを作成</DialogTitle>
             </DialogHeader>
@@ -284,7 +287,7 @@ export const PlatformManager = () => {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingPlatform} onOpenChange={(open) => !open && setEditingPlatform(null)}>
-        <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+        <DialogContent onOpenAutoFocus={() => nameInputRef.current?.focus()}>
           <DialogHeader>
             <DialogTitle>プラットフォームを編集</DialogTitle>
           </DialogHeader>

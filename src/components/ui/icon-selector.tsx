@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,6 +22,7 @@ export const IconSelector: React.FC<IconSelectorProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const categories = useMemo(() => {
     const cats = new Set(availableIcons.map(icon => icon.category));
@@ -44,10 +45,20 @@ export const IconSelector: React.FC<IconSelectorProps> = ({
     setIsOpen(false);
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (open) {
+      // Focus search input when popover opens
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  };
+
   return (
     <div className={cn("space-y-2", className)}>
       <Label>アイコン</Label>
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <Popover open={isOpen} onOpenChange={handleOpenChange} modal={false}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -74,10 +85,12 @@ export const IconSelector: React.FC<IconSelectorProps> = ({
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
+                ref={searchInputRef}
                 placeholder="アイコンを検索..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8"
+                autoFocus
               />
             </div>
 
