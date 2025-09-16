@@ -61,11 +61,31 @@ const Services = () => {
 
   const onSubmitService = async (data: Partial<Service>) => {
     try {
+      // Transform dynamic platform URLs into platform_urls JSONB
+      const { ...serviceData } = data;
+      const platformUrls: Record<string, string> = {};
+      
+      // Extract platform URLs from form data
+      userPlatforms
+        .filter(p => p.is_enabled)
+        .forEach(platform => {
+          const urlField = `${platform.platform_slug}_url`;
+          const urlValue = (data as any)[urlField];
+          if (urlValue?.trim()) {
+            platformUrls[platform.platform_slug] = urlValue.trim();
+          }
+          // Remove the individual URL field from service data
+          delete (serviceData as any)[urlField];
+        });
+      
+      // Add platform_urls to service data
+      (serviceData as any).platform_urls = platformUrls;
+      
       if (editingService) {
-        await updateService.mutateAsync({ id: editingService.id, ...data });
+        await updateService.mutateAsync({ id: editingService.id, ...serviceData });
         toast({ title: "サービスを更新しました" });
       } else {
-        await createService.mutateAsync(data as Omit<Service, 'id' | 'created_at' | 'updated_at'>);
+        await createService.mutateAsync(serviceData as Omit<Service, 'id' | 'created_at' | 'updated_at'>);
         toast({ title: "サービスを作成しました" });
       }
       setIsServiceDialogOpen(false);
@@ -82,9 +102,25 @@ const Services = () => {
 
   const handleEditService = (service: Service) => {
     setEditingService(service);
+    
+    // Set basic service fields
     Object.keys(service).forEach(key => {
-      setValue(key as keyof Service, service[key as keyof Service]);
+      if (key !== 'platform_urls') {
+        setValue(key as keyof Service, service[key as keyof Service]);
+      }
     });
+    
+    // Set dynamic platform URL fields from platform_urls JSONB
+    if (service.platform_urls) {
+      userPlatforms
+        .filter(p => p.is_enabled)
+        .forEach(platform => {
+          const urlField = `${platform.platform_slug}_url`;
+          const urlValue = service.platform_urls[platform.platform_slug] || '';
+          setValue(urlField as any, urlValue);
+        });
+    }
+    
     setIsServiceDialogOpen(true);
   };
 
@@ -410,84 +446,34 @@ const Services = () => {
               <div className="space-y-4">
                 <h3 className="font-semibold">チャンネルトップURL</h3>
                 <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <Label htmlFor="note_home_url">Note URL</Label>
-                    <Input 
-                      id="note_home_url"
-                      {...register("note_home_url", {
-                        pattern: {
-                          value: /^https:\/\/.+/,
-                          message: "https://で始まる正しいURLを入力してください"
-                        }
-                      })}
-                      placeholder="https://note.com/user"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="youtube_channel_url">YouTube URL</Label>
-                    <Input 
-                      id="youtube_channel_url"
-                      {...register("youtube_channel_url", {
-                        pattern: {
-                          value: /^https:\/\/.+/,
-                          message: "https://で始まる正しいURLを入力してください"
-                        }
-                      })}
-                      placeholder="https://youtube.com/@channel"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="spotify_show_url">Spotify URL</Label>
-                    <Input 
-                      id="spotify_show_url"
-                      {...register("spotify_show_url", {
-                        pattern: {
-                          value: /^https:\/\/.+/,
-                          message: "https://で始まる正しいURLを入力してください"
-                        }
-                      })}
-                      placeholder="https://open.spotify.com/show/..."
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="instagram_profile_url">Instagram URL</Label>
-                    <Input 
-                      id="instagram_profile_url"
-                      {...register("instagram_profile_url", {
-                        pattern: {
-                          value: /^https:\/\/.+/,
-                          message: "https://で始まる正しいURLを入力してください"
-                        }
-                      })}
-                      placeholder="https://instagram.com/user"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="tiktok_profile_url">TikTok URL</Label>
-                    <Input 
-                      id="tiktok_profile_url"
-                      {...register("tiktok_profile_url", {
-                        pattern: {
-                          value: /^https:\/\/.+/,
-                          message: "https://で始まる正しいURLを入力してください"
-                        }
-                      })}
-                      placeholder="https://tiktok.com/@user"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="apple_podcasts_url">Apple Podcasts URL</Label>
-                    <Input 
-                      id="apple_podcasts_url"
-                      {...register("apple_podcasts_url", {
-                        pattern: {
-                          value: /^https:\/\/.+/,
-                          message: "https://で始まる正しいURLを入力してください"
-                        }
-                      })}
-                      placeholder="https://podcasts.apple.com/podcast/id..."
-                    />
-                   </div>
+                  {userPlatforms
+                    .filter(p => p.is_enabled)
+                    .sort((a, b) => a.display_order - b.display_order)
+                    .map((platform) => (
+                      <div key={platform.id}>
+                        <Label htmlFor={`${platform.platform_slug}_url`}>
+                          <span className="flex items-center gap-2">
+                            <PlatformIcon 
+                              iconName={platform.platform_icon || 'FaGlobe'} 
+                              size={16} 
+                              color={platform.platform_color || '#6B7280'}
+                            />
+                            {platform.platform_name} URL
+                          </span>
+                        </Label>
+                        <Input 
+                          id={`${platform.platform_slug}_url`}
+                          {...register(`${platform.platform_slug}_url` as any, {
+                            pattern: {
+                              value: /^https:\/\/.+/,
+                              message: "https://で始まる正しいURLを入力してください"
+                            }
+                          })}
+                          placeholder={platform.url_template || `https://${platform.platform_slug}.com/...`}
+                        />
+                      </div>
+                    ))
+                  }
                 </div>
               </div>
 
@@ -960,11 +946,11 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
       published_at: episode?.published_at || null,
     };
     
-    // Add dynamic platform URLs
+    // Add dynamic platform URLs from platform_urls JSONB field
     const platformUrls: Record<string, string> = {};
     enabledPlatforms.forEach(platform => {
       const urlField = `${platform.platform_slug}_url`;
-      platformUrls[urlField] = (episode as any)?.[urlField] || '';
+      platformUrls[urlField] = episode?.platform_urls?.[platform.platform_slug] || '';
     });
     
     return { ...baseData, ...platformUrls };
@@ -999,6 +985,7 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
     const cleanedData: any = {
       ep_no: formData.ep_no,
       title: formData.title.trim() || null,
+      alias: formData.alias.trim() || null,
       default_platform: formData.default_platform,
       custom_url: formData.custom_url.trim() || null,
       custom_platform_id: formData.custom_platform_id || null,
@@ -1007,12 +994,16 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
       published_at: formData.published_at === '' ? null : formData.published_at
     };
     
-    // Add dynamic platform URLs
+    // Create platform_urls JSONB object from dynamic platform URLs
+    const platformUrls: Record<string, string> = {};
     enabledPlatforms.forEach(platform => {
       const urlField = `${platform.platform_slug}_url`;
       const urlValue = (formData as any)[urlField];
-      cleanedData[urlField] = urlValue?.trim() || null;
+      if (urlValue?.trim()) {
+        platformUrls[platform.platform_slug] = urlValue.trim();
+      }
     });
+    cleanedData.platform_urls = platformUrls;
     
     onSubmit(cleanedData);
   };

@@ -49,11 +49,6 @@ export const useCreateEpisode = () => {
         ...episode,
         title: episode.title?.trim() || null,
         alias: episode.alias?.trim() || null,
-        note_url: episode.note_url?.trim() || null,
-        youtube_url: episode.youtube_url?.trim() || null,
-        spotify_url: episode.spotify_url?.trim() || null,
-        instagram_url: episode.instagram_url?.trim() || null,
-        apple_podcasts_url: episode.apple_podcasts_url?.trim() || null,
         custom_url: episode.custom_url?.trim() || null,
         user_id: (await supabase.auth.getUser()).data.user?.id
       };
@@ -95,11 +90,6 @@ export const useUpdateEpisode = () => {
         ...updates,
         title: updates.title?.trim() || null,
         alias: updates.alias?.trim() || null,
-        note_url: updates.note_url?.trim() || null,
-        youtube_url: updates.youtube_url?.trim() || null,
-        spotify_url: updates.spotify_url?.trim() || null,
-        instagram_url: updates.instagram_url?.trim() || null,
-        apple_podcasts_url: updates.apple_podcasts_url?.trim() || null,
         custom_url: updates.custom_url?.trim() || null,
       };
       
