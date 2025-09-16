@@ -593,6 +593,13 @@ const Services = () => {
                     {filteredEpisodes.map((episode) => (
                       <TableRow key={episode.id}>
                         <TableCell className="font-medium">#{episode.ep_no}</TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {episode.alias && (
+                            <code className="text-xs bg-muted px-1 py-0.5 rounded">
+                              {episode.alias}
+                            </code>
+                          )}
+                        </TableCell>
                         <TableCell>{episode.title || '無題'}</TableCell>
                         <TableCell>{getPlatformLabel(episode.default_platform, episode.custom_platform_id)}</TableCell>
                         <TableCell>{getStatusBadge(episode.status)}</TableCell>
@@ -619,7 +626,8 @@ const Services = () => {
                                 if (selectedService) {
                                   const url = getPublicUrl({
                                     service: selectedService.slug,
-                                    epNo: episode.ep_no
+                                    epNo: episode.ep_no,
+                                    alias: episode.alias
                                   });
                                   copyToClipboard(url);
                                 }
@@ -635,7 +643,8 @@ const Services = () => {
                                 if (selectedService) {
                                   const url = getPublicUrl({
                                     service: selectedService.slug,
-                                    epNo: episode.ep_no
+                                    epNo: episode.ep_no,
+                                    alias: episode.alias
                                   });
                                   window.open(url, '_blank');
                                 }
@@ -734,6 +743,7 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
     const baseData = {
       ep_no: episode?.ep_no || 1,
       title: episode?.title || '',
+      alias: episode?.alias || '',
       default_platform: episode?.default_platform || service?.default_platform || 'NOTE' as AppPlatform,
       custom_url: episode?.custom_url || '',
       custom_platform_id: episode?.custom_platform_id || '',
@@ -814,6 +824,21 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
           />
         </div>
         
+        <div>
+          <Label htmlFor="alias">エイリアス（オプション）</Label>
+          <Input
+            id="alias"
+            value={formData.alias}
+            onChange={(e) => setFormData(prev => ({ ...prev, alias: e.target.value }))}
+            placeholder="例: chanelno5"
+          />
+          <p className="text-sm text-muted-foreground mt-1">
+            英数字とハイフンのみ。URLで使用されます
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="status">ステータス</Label>
           <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({ ...prev, status: value as EpisodeStatus }))}>

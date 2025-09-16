@@ -56,11 +56,16 @@ Deno.serve(async (req) => {
     
     console.log('Redirect request:', { rawPathname, pathname, search: url.search });
 
-    // Parse URL pattern: /{service}/ep/{epNo}(/{variant})?
-    const pathRegex = /^\/([^\/]+)\/ep\/(\d+)(?:\/([^\/]+))?$/;
-    const match = pathname.match(pathRegex);
+    // Parse URL patterns: 
+    // /{service}/ep/{epNo|alias}(/{variant})?
+    // /{service}/a/{alias}(/{variant})?
+    const episodeRegex = /^\/([^\/]+)\/ep\/([^\/]+)(?:\/([^\/]+))?$/;
+    const serviceAliasRegex = /^\/([^\/]+)\/a\/([^\/]+)(?:\/([^\/]+))?$/;
     
-    if (!match) {
+    const episodeMatch = pathname.match(episodeRegex);
+    const serviceAliasMatch = pathname.match(serviceAliasRegex);
+    
+    if (!episodeMatch && !serviceAliasMatch) {
       console.log('Invalid path format:', pathname);
       return new Response('Not Found', { 
         status: 404, 
@@ -68,15 +73,16 @@ Deno.serve(async (req) => {
       });
     }
 
-    const [, serviceSlug, epNoStr, variant] = match;
-    const epNo = parseInt(epNoStr);
-    
-    if (isNaN(epNo) || epNo <= 0) {
-      console.log('Invalid episode number:', epNoStr);
-      return new Response('Not Found', { 
-        status: 404, 
-        headers: { ...corsHeaders, 'X-Robots-Tag': 'noindex' }
-      });
+    let serviceSlug: string;
+    let epNoOrAlias: string;
+    let variant: string | undefined;
+    let isServiceAlias = false;
+
+    if (serviceAliasMatch) {
+      [, serviceSlug, epNoOrAlias, variant] = serviceAliasMatch;
+      isServiceAlias = true;
+    } else {
+      [, serviceSlug, epNoOrAlias, variant] = episodeMatch!;
     }
 
     // Initialize Supabase client
@@ -100,13 +106,111 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Find episode
-    const { data: episode, error: episodeError } = await supabase
-      .from('episodes')
-      .select('*')
-      .eq('service_id', service.id)
-      .eq('ep_no', epNo)
-      .single();
+    if (isServiceAlias) {
+      // Handle service alias: /{service}/a/{alias}(/{variant})?
+      const { data: serviceAlias, error: aliasError } = await supabase
+        .from('service_aliases')
+        .select('*')
+        .eq('service_id', service.id)
+        .eq('alias', epNoOrAlias)
+        .eq('is_enabled', true)
+        .single();
+
+      if (aliasError || !serviceAlias) {
+        console.log('Service alias not found:', epNoOrAlias, aliasError);
+        return new Response('Not Found', { 
+          status: 404, 
+          headers: { ...corsHeaders, 'X-Robots-Tag': 'noindex' }
+        });
+      }
+
+      // Service alias found, redirect to the specified URL
+      redirectUrl = serviceAlias.redirect_url;
+      actualVariant = variant || 'service_alias';
+      
+      // Log the click (best effort)
+      try {
+        const userAgent = req.headers.get('user-agent') || '';
+        const referrer = req.headers.get('referer') || req.headers.get('referrer') || '';
+        const clientIP = getClientIP(req.headers);
+        const ipHash = await hashIP(clientIP);
+        
+        const clickData = {
+          service_id: service.id,
+          episode_id: null,
+          ep_no: null,
+          variant: actualVariant,
+          referrer: referrer || null,
+          referer_domain: referrer ? extractDomain(referrer) : null,
+          utm_source: searchParams.get('utm_source') || null,
+          utm_medium: searchParams.get('utm_medium') || null,
+          utm_campaign: searchParams.get('utm_campaign') || null,
+          user_agent: userAgent,
+          is_bot: isBot(userAgent),
+          ip_hash: ipHash,
+          host: req.headers.get('host') || null,
+          path: pathname,
+        };
+
+        await supabase.from('clicks').insert(clickData);
+        console.log('Service alias click logged successfully');
+      } catch (error) {
+        console.error('Failed to log service alias click:', error);
+      }
+
+      // Merge query parameters
+      const targetUrl = new URL(redirectUrl);
+      for (const [key, value] of searchParams.entries()) {
+        if (!targetUrl.searchParams.has(key)) {
+          targetUrl.searchParams.set(key, value);
+        }
+      }
+
+      console.log('Redirecting to service alias:', targetUrl.toString());
+
+      return new Response(null, {
+        status: 302,
+        headers: {
+          ...corsHeaders,
+          'Location': targetUrl.toString(),
+          'X-Robots-Tag': 'noindex'
+        }
+      });
+    }
+
+    // Handle episode: /{service}/ep/{epNo|alias}(/{variant})?
+    let episode: any = null;
+    let epNo: number | null = null;
+    
+    // Check if epNoOrAlias is a number (episode number) or string (alias)
+    const parsedEpNo = parseInt(epNoOrAlias);
+    if (!isNaN(parsedEpNo) && parsedEpNo > 0 && parsedEpNo.toString() === epNoOrAlias) {
+      // It's a valid episode number
+      epNo = parsedEpNo;
+      const { data: episodeData, error: episodeError } = await supabase
+        .from('episodes')
+        .select('*')
+        .eq('service_id', service.id)
+        .eq('ep_no', epNo)
+        .single();
+      
+      if (!episodeError && episodeData) {
+        episode = episodeData;
+      }
+    } else {
+      // It's an alias
+      const { data: episodeData, error: episodeError } = await supabase
+        .from('episodes')
+        .select('*')
+        .eq('service_id', service.id)
+        .eq('alias', epNoOrAlias)
+        .single();
+      
+      if (!episodeError && episodeData) {
+        episode = episodeData;
+        epNo = episodeData.ep_no;
+      }
+    }
 
     let redirectUrl: string | null = null;
     let actualVariant = variant || 'default';
@@ -204,7 +308,7 @@ Deno.serve(async (req) => {
         // FALLBACK_TO_CHANNEL - will be handled below
       }
     } else {
-      // Episode doesn't exist, use service fallback
+      // Episode doesn't exist (neither by number nor alias), use service fallback
       if (variant) {
         switch (variant.toLowerCase()) {
           case 'note':
@@ -272,7 +376,7 @@ Deno.serve(async (req) => {
       const clickData = {
         service_id: service.id,
         episode_id: episode?.id || null,
-        ep_no: epNo,
+        ep_no: epNo || episode?.ep_no || null,
         variant: actualVariant,
         referrer: referrer || null,
         referer_domain: referrer ? extractDomain(referrer) : null,

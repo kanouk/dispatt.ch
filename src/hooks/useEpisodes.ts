@@ -26,7 +26,8 @@ export const useEpisodes = (serviceId?: string, search?: string) => {
         if (isNumeric) {
           query = query.eq('ep_no', parseInt(search));
         } else {
-          query = query.ilike('title', `%${search}%`);
+          // Search by title or alias
+          query = query.or(`title.ilike.%${search}%,alias.ilike.%${search}%`);
         }
       }
       
@@ -47,6 +48,7 @@ export const useCreateEpisode = () => {
       const normalizedEpisode = {
         ...episode,
         title: episode.title?.trim() || null,
+        alias: episode.alias?.trim() || null,
         note_url: episode.note_url?.trim() || null,
         youtube_url: episode.youtube_url?.trim() || null,
         spotify_url: episode.spotify_url?.trim() || null,
@@ -66,6 +68,9 @@ export const useCreateEpisode = () => {
         // カスタムエラーメッセージ
         if (error.code === '23505' && error.message.includes('episodes_service_id_ep_no_key')) {
           throw new Error('このエピソード番号は既に存在します');
+        }
+        if (error.code === '23505' && error.message.includes('episodes_service_alias_unique')) {
+          throw new Error('このエイリアスは既に存在します');
         }
         if (error.message.includes('valid_custom_url')) {
           throw new Error('カスタムURL形式が正しくありません');
@@ -89,6 +94,7 @@ export const useUpdateEpisode = () => {
       const normalizedUpdates = {
         ...updates,
         title: updates.title?.trim() || null,
+        alias: updates.alias?.trim() || null,
         note_url: updates.note_url?.trim() || null,
         youtube_url: updates.youtube_url?.trim() || null,
         spotify_url: updates.spotify_url?.trim() || null,
@@ -108,6 +114,9 @@ export const useUpdateEpisode = () => {
         // カスタムエラーメッセージ
         if (error.code === '23505' && error.message.includes('episodes_service_id_ep_no_key')) {
           throw new Error('このエピソード番号は既に存在します');
+        }
+        if (error.code === '23505' && error.message.includes('episodes_service_alias_unique')) {
+          throw new Error('このエイリアスは既に存在します');
         }
         if (error.message.includes('valid_custom_url')) {
           throw new Error('カスタムURL形式が正しくありません');
