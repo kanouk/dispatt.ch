@@ -100,7 +100,9 @@ import {
   SiNotion,
   SiFigma,
   SiCanva,
-  SiAdobe
+  SiAdobe,
+  SiZoom,
+  SiSinaweibo
 } from 'react-icons/si';
 import { cn } from '@/lib/utils';
 
@@ -147,7 +149,6 @@ const iconMap = {
   FaGitlab,
   FaSlack,
   FaSkype,
-  FaZoom,
   FaPaypal,
   FaStripe,
   FaEtsy,
@@ -161,7 +162,6 @@ const iconMap = {
   FaKickstarter,
   FaPatreon,
   FaVk,
-  FaWeibo,
   FaLine,
   FaBandcamp,
   FaMixcloud,
@@ -171,10 +171,6 @@ const iconMap = {
   FaStackOverflow,
   FaCodepen,
   FaTrello,
-  FaNotion,
-  FaFigma,
-  FaCanva,
-  FaAdobe,
   
   // Simple Icons
   SiApplepodcasts,
@@ -197,12 +193,10 @@ const iconMap = {
   SiAmazon,
   SiApple,
   SiGoogle,
-  SiMicrosoft,
   SiDropbox,
   SiGithub,
   SiGitlab,
   SiSlack,
-  SiSkype,
   SiZoom,
   SiPaypal,
   SiStripe,
@@ -217,7 +211,7 @@ const iconMap = {
   SiKickstarter,
   SiPatreon,
   SiVk,
-  SiWeibo,
+  SiSinaweibo,
   SiLine,
   SiBandcamp,
   SiMixcloud,
@@ -265,8 +259,7 @@ export const availableIcons: IconData[] = [
   { name: 'SiLine', component: SiLine, category: 'Communication', defaultColor: '#00C300', label: 'LINE (Alt)' },
   { name: 'FaVk', component: FaVk, category: 'SNS', defaultColor: '#4C75A3', label: 'VKontakte' },
   { name: 'SiVk', component: SiVk, category: 'SNS', defaultColor: '#4C75A3', label: 'VKontakte (Alt)' },
-  { name: 'FaWeibo', component: FaWeibo, category: 'SNS', defaultColor: '#E6162D', label: 'Weibo' },
-  { name: 'SiWeibo', component: SiWeibo, category: 'SNS', defaultColor: '#E6162D', label: 'Weibo (Alt)' },
+  { name: 'SiSinaweibo', component: SiSinaweibo, category: 'SNS', defaultColor: '#E6162D', label: 'Weibo' },
 
   // Music & Audio
   { name: 'FaSpotify', component: FaSpotify, category: 'Music/Audio', defaultColor: '#1DB954', label: 'Spotify' },
@@ -291,12 +284,9 @@ export const availableIcons: IconData[] = [
   { name: 'FaSlack', component: FaSlack, category: 'Business', defaultColor: '#4A154B', label: 'Slack' },
   { name: 'SiSlack', component: SiSlack, category: 'Business', defaultColor: '#4A154B', label: 'Slack (Alt)' },
   { name: 'FaSkype', component: FaSkype, category: 'Communication', defaultColor: '#00AFF0', label: 'Skype' },
-  { name: 'SiSkype', component: SiSkype, category: 'Communication', defaultColor: '#00AFF0', label: 'Skype (Alt)' },
-  { name: 'FaZoom', component: FaZoom, category: 'Communication', defaultColor: '#2D8CFF', label: 'Zoom' },
   { name: 'SiZoom', component: SiZoom, category: 'Communication', defaultColor: '#2D8CFF', label: 'Zoom (Alt)' },
   { name: 'FaTrello', component: FaTrello, category: 'Productivity', defaultColor: '#0079BF', label: 'Trello' },
   { name: 'SiTrello', component: SiTrello, category: 'Productivity', defaultColor: '#0079BF', label: 'Trello (Alt)' },
-  { name: 'FaNotion', component: FaNotion, category: 'Productivity', defaultColor: '#000000', label: 'Notion' },
   { name: 'SiNotion', component: SiNotion, category: 'Productivity', defaultColor: '#000000', label: 'Notion (Alt)' },
 
   // Technology & Development
@@ -315,7 +305,6 @@ export const availableIcons: IconData[] = [
   { name: 'FaGoogle', component: FaGoogle, category: 'Technology', defaultColor: '#4285F4', label: 'Google' },
   { name: 'SiGoogle', component: SiGoogle, category: 'Technology', defaultColor: '#4285F4', label: 'Google (Alt)' },
   { name: 'FaMicrosoft', component: FaMicrosoft, category: 'Technology', defaultColor: '#00BCF2', label: 'Microsoft' },
-  { name: 'SiMicrosoft', component: SiMicrosoft, category: 'Technology', defaultColor: '#00BCF2', label: 'Microsoft (Alt)' },
   { name: 'FaAmazon', component: FaAmazon, category: 'E-commerce', defaultColor: '#FF9900', label: 'Amazon' },
   { name: 'SiAmazon', component: SiAmazon, category: 'E-commerce', defaultColor: '#FF9900', label: 'Amazon (Alt)' },
 
@@ -334,11 +323,8 @@ export const availableIcons: IconData[] = [
   { name: 'SiBehance', component: SiBehance, category: 'Creative', defaultColor: '#1769FF', label: 'Behance (Alt)' },
   { name: 'FaDribbble', component: FaDribbble, category: 'Creative', defaultColor: '#EA4C89', label: 'Dribbble' },
   { name: 'SiDribbble', component: SiDribbble, category: 'Creative', defaultColor: '#EA4C89', label: 'Dribbble (Alt)' },
-  { name: 'FaFigma', component: FaFigma, category: 'Creative', defaultColor: '#F24E1E', label: 'Figma' },
   { name: 'SiFigma', component: SiFigma, category: 'Creative', defaultColor: '#F24E1E', label: 'Figma (Alt)' },
-  { name: 'FaCanva', component: FaCanva, category: 'Creative', defaultColor: '#00C4CC', label: 'Canva' },
   { name: 'SiCanva', component: SiCanva, category: 'Creative', defaultColor: '#00C4CC', label: 'Canva (Alt)' },
-  { name: 'FaAdobe', component: FaAdobe, category: 'Creative', defaultColor: '#FF0000', label: 'Adobe' },
   { name: 'SiAdobe', component: SiAdobe, category: 'Creative', defaultColor: '#FF0000', label: 'Adobe (Alt)' },
 
   // Other Services
