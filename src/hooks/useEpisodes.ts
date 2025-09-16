@@ -6,12 +6,16 @@ export const useEpisodes = (serviceId?: string, search?: string) => {
   return useQuery({
     queryKey: ['episodes', serviceId, search],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+      
       let query = supabase
         .from('episodes')
         .select(`
           *,
           services!inner(name, slug)
-        `);
+        `)
+        .eq('user_id', user.id);
       
       if (serviceId) {
         query = query.eq('service_id', serviceId);

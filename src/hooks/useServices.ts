@@ -6,9 +6,13 @@ export const useServices = () => {
   return useQuery({
     queryKey: ['services'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+      
       const { data, error } = await supabase
         .from('services')
         .select('*')
+        .eq('user_id', user.id)
         .order('name');
       
       if (error) throw error;
