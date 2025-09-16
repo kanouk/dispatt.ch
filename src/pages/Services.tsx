@@ -712,21 +712,36 @@ interface EpisodeFormProps {
 
 const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel }: EpisodeFormProps) => {
   const { toast } = useToast();
-   const [formData, setFormData] = useState({
-     ep_no: episode?.ep_no || 1,
-     title: episode?.title || '',
-     default_platform: episode?.default_platform || service?.default_platform || 'NOTE' as AppPlatform,
-     note_url: episode?.note_url || '',
-     youtube_url: episode?.youtube_url || '',
-     spotify_url: episode?.spotify_url || '',
-     instagram_url: episode?.instagram_url || '',
-     apple_podcasts_url: episode?.apple_podcasts_url || '',
-    custom_url: episode?.custom_url || '',
-     custom_platform_id: episode?.custom_platform_id || '',
-     fallback_behavior: episode?.fallback_behavior || 'FALLBACK_TO_CHANNEL' as FallbackBehavior,
-     status: episode?.status || 'DRAFT' as EpisodeStatus,
-     published_at: episode?.published_at || null,
-   });
+  
+  // Filter enabled platforms and sort by display_order
+  const enabledPlatforms = userPlatforms
+    .filter(p => p.is_enabled)
+    .sort((a, b) => a.display_order - b.display_order);
+  
+  // Create initial form data with dynamic platform URLs
+  const createInitialFormData = () => {
+    const baseData = {
+      ep_no: episode?.ep_no || 1,
+      title: episode?.title || '',
+      default_platform: episode?.default_platform || service?.default_platform || 'NOTE' as AppPlatform,
+      custom_url: episode?.custom_url || '',
+      custom_platform_id: episode?.custom_platform_id || '',
+      fallback_behavior: episode?.fallback_behavior || 'FALLBACK_TO_CHANNEL' as FallbackBehavior,
+      status: episode?.status || 'DRAFT' as EpisodeStatus,
+      published_at: episode?.published_at || null,
+    };
+    
+    // Add dynamic platform URLs
+    const platformUrls: Record<string, string> = {};
+    enabledPlatforms.forEach(platform => {
+      const urlField = `${platform.platform_slug}_url`;
+      platformUrls[urlField] = (episode as any)?.[urlField] || '';
+    });
+    
+    return { ...baseData, ...platformUrls };
+  };
+  
+  const [formData, setFormData] = useState(createInitialFormData());
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -751,19 +766,25 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
       }
     }
     
-     // 空文字列をnullに変換
-     const cleanedData = {
-       ...formData,
-       title: formData.title.trim() || null,
-       note_url: formData.note_url.trim() || null,
-       youtube_url: formData.youtube_url.trim() || null,
-       spotify_url: formData.spotify_url.trim() || null,
-       instagram_url: formData.instagram_url.trim() || null,
-       apple_podcasts_url: formData.apple_podcasts_url.trim() || null,
+    // 空文字列をnullに変換
+    const cleanedData: any = {
+      ep_no: formData.ep_no,
+      title: formData.title.trim() || null,
+      default_platform: formData.default_platform,
       custom_url: formData.custom_url.trim() || null,
-       custom_platform_id: formData.custom_platform_id || null,
-       published_at: formData.published_at === '' ? null : formData.published_at
-     };
+      custom_platform_id: formData.custom_platform_id || null,
+      fallback_behavior: formData.fallback_behavior,
+      status: formData.status,
+      published_at: formData.published_at === '' ? null : formData.published_at
+    };
+    
+    // Add dynamic platform URLs
+    enabledPlatforms.forEach(platform => {
+      const urlField = `${platform.platform_slug}_url`;
+      const urlValue = (formData as any)[urlField];
+      cleanedData[urlField] = urlValue?.trim() || null;
+    });
+    
     onSubmit(cleanedData);
   };
 
@@ -903,55 +924,31 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
       <div className="space-y-3">
         <Label>プラットフォーム別URL</Label>
         
-        <div>
-          <Label htmlFor="note_url" className="text-sm text-muted-foreground">note URL</Label>
-          <Input
-            id="note_url"
-            value={formData.note_url}
-            onChange={(e) => setFormData(prev => ({ ...prev, note_url: e.target.value }))}
-            placeholder="https://note.com/..."
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="youtube_url" className="text-sm text-muted-foreground">YouTube URL</Label>
-          <Input
-            id="youtube_url"
-            value={formData.youtube_url}
-            onChange={(e) => setFormData(prev => ({ ...prev, youtube_url: e.target.value }))}
-            placeholder="https://youtube.com/watch?v=..."
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="spotify_url" className="text-sm text-muted-foreground">Spotify URL</Label>
-          <Input
-            id="spotify_url"
-            value={formData.spotify_url}
-            onChange={(e) => setFormData(prev => ({ ...prev, spotify_url: e.target.value }))}
-            placeholder="https://open.spotify.com/episode/..."
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="instagram_url" className="text-sm text-muted-foreground">Instagram URL</Label>
-          <Input
-            id="instagram_url"
-            value={formData.instagram_url}
-            onChange={(e) => setFormData(prev => ({ ...prev, instagram_url: e.target.value }))}
-            placeholder="https://instagram.com/p/..."
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="apple_podcasts_url" className="text-sm text-muted-foreground">Apple Podcasts URL</Label>
-          <Input
-            id="apple_podcasts_url"
-            value={formData.apple_podcasts_url}
-            onChange={(e) => setFormData(prev => ({ ...prev, apple_podcasts_url: e.target.value }))}
-            placeholder="https://podcasts.apple.com/podcast/id..."
-          />
-        </div>
+        {enabledPlatforms.map((platform) => {
+          const urlField = `${platform.platform_slug}_url`;
+          const urlValue = (formData as any)[urlField] || '';
+          
+          return (
+            <div key={platform.id}>
+              <Label htmlFor={urlField} className="text-sm text-muted-foreground">
+                <span className="flex items-center gap-2">
+                  <PlatformIcon 
+                    iconName={platform.platform_icon || 'FaGlobe'} 
+                    size={16} 
+                    color={platform.platform_color || '#6B7280'}
+                  />
+                  {platform.platform_name} URL
+                </span>
+              </Label>
+              <Input
+                id={urlField}
+                value={urlValue}
+                onChange={(e) => setFormData(prev => ({ ...prev, [urlField]: e.target.value }))}
+                placeholder={platform.url_template || `https://${platform.platform_slug}.com/...`}
+              />
+            </div>
+          );
+        })}
         
         {formData.default_platform === 'CUSTOM' && (
           <div>
