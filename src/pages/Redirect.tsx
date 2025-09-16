@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { PlatformIcon } from '@/components/ui/platform-icon';
 
 // Public redirect bridge: accepts dispatt.ch/{service}/ep/{epNo}/[:variant]
 // and forwards to the Supabase Edge Function which performs the actual redirect
@@ -26,6 +27,20 @@ const Redirect: React.FC = () => {
       case 'instagram': return 'Instagram';
       case 'tiktok': return 'TikTok';
       default: return 'デフォルト';
+    }
+  };
+
+  // プラットフォームのアイコン名マッピング
+  const getPlatformIconName = (platform?: string) => {
+    switch (platform) {
+      case 'youtube': return 'SiYoutube';
+      case 'spotify': return 'SiSpotify';
+      case 'note': return 'FaStickyNote';
+      case 'apple': return 'SiApplepodcasts';
+      case 'google': return 'SiGooglepodcasts';
+      case 'instagram': return 'SiInstagram';
+      case 'tiktok': return 'SiTiktok';
+      default: return 'FaGlobe';
     }
   };
 
@@ -147,17 +162,20 @@ const Redirect: React.FC = () => {
                 <>
                   {episodeNumber}: {episodeTitle}
                   <br />
-                  <span className="inline-flex items-center gap-1 mt-1">
-                    <span>→</span>
-                    <span className="text-primary font-medium">{platformName}</span>
+                  <span className="inline-flex items-center gap-2 mt-2">
+                    <PlatformIcon iconName={getPlatformIconName(variant)} size={20} />
+                    <span className="text-primary font-medium">{platformName}へ移動中</span>
                   </span>
                 </>
               ) : (
-                <span className="inline-flex items-center gap-2">
+                <>
                   <span>{episodeNumber}</span>
-                  <span>→</span>
-                  <span className="text-primary font-medium">{platformName}</span>
-                </span>
+                  <br />
+                  <span className="inline-flex items-center gap-2 mt-2">
+                    <PlatformIcon iconName={getPlatformIconName(variant)} size={20} />
+                    <span className="text-primary font-medium">{platformName}へ移動中</span>
+                  </span>
+                </>
               )}
             </p>
           </div>
