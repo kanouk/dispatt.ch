@@ -592,13 +592,15 @@ const Services = () => {
                   <TableBody>
                     {filteredEpisodes.map((episode) => (
                       <TableRow key={episode.id}>
-                        <TableCell className="font-medium">#{episode.ep_no}</TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {episode.alias && (
-                            <code className="text-xs bg-muted px-1 py-0.5 rounded">
-                              {episode.alias}
-                            </code>
-                          )}
+                        <TableCell className="font-medium">
+                          <div>
+                            #{episode.ep_no}
+                            {episode.alias && (
+                              <div className="text-xs text-muted-foreground mt-1">
+                                <code className="bg-muted px-1 py-0.5 rounded">{episode.alias}</code>
+                              </div>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell>{episode.title || '無題'}</TableCell>
                         <TableCell>{getPlatformLabel(episode.default_platform, episode.custom_platform_id)}</TableCell>
