@@ -637,7 +637,7 @@ const Services = () => {
                     <TableRow>
                       <TableHead>エピソード番号</TableHead>
                       <TableHead>タイトル</TableHead>
-                      <TableHead>プラットフォーム</TableHead>
+                      <TableHead>既定プラットフォーム</TableHead>
                       <TableHead>ステータス</TableHead>
                       <TableHead>公開日</TableHead>
                       <TableHead>アクション</TableHead>
@@ -757,7 +757,7 @@ const Services = () => {
             <div className="mb-6 flex justify-end">
               <Button 
                 onClick={() => setIsAliasDialogOpen(true)}
-                className="bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70"
+                className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 🔗 エイリアス作成
