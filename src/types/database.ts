@@ -7,6 +7,9 @@ export interface Service {
   slug: string;
   name: string;
   default_platform: AppPlatform;
+  default_platform_id?: string;
+  platform_urls: any; // JSONB from Supabase
+  // Legacy fields (will be removed after migration)
   note_home_url?: string;
   youtube_channel_url?: string;
   spotify_show_url?: string;
@@ -25,6 +28,9 @@ export interface Episode {
   title?: string;
   alias?: string;
   default_platform: AppPlatform;
+  default_platform_id?: string;
+  platform_urls: any; // JSONB from Supabase
+  // Legacy fields (will be removed after migration)
   note_url?: string;
   youtube_url?: string;
   spotify_url?: string;
