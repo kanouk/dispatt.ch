@@ -28,7 +28,6 @@ export interface Episode {
   youtube_url?: string;
   spotify_url?: string;
   instagram_url?: string;
-  tiktok_url?: string;
   apple_podcasts_url?: string;
   custom_url?: string;
   custom_platform_id?: string;
