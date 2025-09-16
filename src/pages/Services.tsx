@@ -3,6 +3,8 @@ import { useState, useMemo } from "react";
 import { useServices, useCreateService, useUpdateService, useDeleteService } from "@/hooks/useServices";
 import { useEpisodes, useCreateEpisode, useUpdateEpisode, useDeleteEpisode } from "@/hooks/useEpisodes";
 import { useUserPlatforms } from "@/hooks/useUserPlatforms";
+import { useServiceAliases, useCreateServiceAlias, useUpdateServiceAlias, useDeleteServiceAlias } from "@/hooks/useServiceAliases";
+import { ServiceAliasForm } from "@/components/ServiceAliasForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Check, X, Search, ExternalLink, Copy, ChevronRight, ChevronDown } from "lucide-react";
 import { getPublicUrl } from "@/utils/url";
 import { PlatformIcon } from "@/components/ui/platform-icon";
-import type { Service, Episode, AppPlatform, EpisodeStatus, FallbackBehavior, UserPlatform } from "@/types/database";
+import type { Service, Episode, AppPlatform, EpisodeStatus, FallbackBehavior, UserPlatform, ServiceAlias } from "@/types/database";
 
 const Services = () => {
   const [editingService, setEditingService] = useState<Service | null>(null);
@@ -26,6 +28,8 @@ const Services = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isEpisodeDialogOpen, setIsEpisodeDialogOpen] = useState(false);
   const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
+  const [isAliasDialogOpen, setIsAliasDialogOpen] = useState(false);
+  const [editingAlias, setEditingAlias] = useState<ServiceAlias | null>(null);
   
   const { data: services, isLoading } = useServices();
   const { data: userPlatforms = [] } = useUserPlatforms();
@@ -37,6 +41,11 @@ const Services = () => {
   const createEpisodeMutation = useCreateEpisode();
   const updateEpisodeMutation = useUpdateEpisode();
   const deleteEpisodeMutation = useDeleteEpisode();
+
+  const { data: aliases = [] } = useServiceAliases(selectedServiceId);
+  const createAliasMutation = useCreateServiceAlias();
+  const updateAliasMutation = useUpdateServiceAlias();
+  const deleteAliasMutation = useDeleteServiceAlias();
 
   const { toast } = useToast();
 
@@ -165,6 +174,65 @@ const Services = () => {
       toast({
         title: "エラー",
         description: "エピソードの削除に失敗しました。",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Service Alias handlers
+  const handleCreateAlias = async (data: any) => {
+    try {
+      await createAliasMutation.mutateAsync({
+        ...data,
+        service_id: selectedServiceId,
+      });
+      toast({
+        title: "エイリアスを作成しました",
+        description: "新しいエイリアスが正常に作成されました。",
+      });
+      setIsAliasDialogOpen(false);
+    } catch (error) {
+      toast({
+        title: "エラー",
+        description: "エイリアスの作成に失敗しました。",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUpdateAlias = async (data: any) => {
+    try {
+      if (!editingAlias) return;
+      await updateAliasMutation.mutateAsync({
+        ...data,
+        id: editingAlias.id,
+        service_id: selectedServiceId,
+      });
+      toast({
+        title: "エイリアスを更新しました",
+        description: "エイリアスが正常に更新されました。",
+      });
+      setEditingAlias(null);
+    } catch (error) {
+      toast({
+        title: "エラー",
+        description: "エイリアスの更新に失敗しました。",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteAlias = async (id: string) => {
+    try {
+      await deleteAliasMutation.mutateAsync({ id, service_id: selectedServiceId });
+      toast({
+        title: "エイリアスを削除しました",
+        description: "エイリアスが正常に削除されました。",
+      });
+    } catch (error) {
+      toast({
+        title: "エラー",
+        description: "エイリアスの削除に失敗しました。",
         variant: "destructive",
       });
     }
@@ -688,8 +756,146 @@ const Services = () => {
               )}
             </CardContent>
           </Card>
+
+          {/* Service Alias Management Section */}
+          <div className="space-y-6 mt-8">
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">🔗 サービスエイリアス管理</h2>
+                <p className="text-muted-foreground">
+                  ✨ 「{selectedService?.name}」の短縮URLを管理
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-6 flex justify-end">
+              <Button 
+                onClick={() => setIsAliasDialogOpen(true)}
+                className="bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                🔗 エイリアス作成
+              </Button>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>エイリアス一覧</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {aliases.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    このサービスにはエイリアスがありません
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>エイリアス名</TableHead>
+                        <TableHead>リダイレクトURL</TableHead>
+                        <TableHead>説明</TableHead>
+                        <TableHead>状態</TableHead>
+                        <TableHead>アクション</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {aliases.map((alias) => (
+                        <TableRow key={alias.id}>
+                          <TableCell className="font-medium">
+                            <code className="bg-muted px-2 py-1 rounded text-sm">
+                              {selectedService?.slug}/a/{alias.alias}
+                            </code>
+                          </TableCell>
+                          <TableCell>
+                            <div className="max-w-xs truncate" title={alias.redirect_url}>
+                              {alias.redirect_url}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="max-w-xs truncate" title={alias.description || ''}>
+                              {alias.description || '説明なし'}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={alias.is_enabled ? "default" : "secondary"}>
+                              {alias.is_enabled ? '有効' : '無効'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => {
+                                  const rootDomain = import.meta.env.VITE_ROOT_DOMAIN || 'example.com';
+                                  const url = `https://${rootDomain}/${selectedService?.slug}/a/${alias.alias}`;
+                                  navigator.clipboard.writeText(url);
+                                  toast({
+                                    title: "URLをコピーしました",
+                                    description: url,
+                                  });
+                                }}
+                              >
+                                <Copy className="h-4 w-4" />
+                              </Button>
+                              
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => setEditingAlias(alias)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="outline" size="sm">
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>エイリアスを削除しますか？</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      この操作は取り消せません。エイリアス「{alias.alias}」を完全に削除します。
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDeleteAlias(alias.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      削除
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
+
+      {/* Service Alias Form Dialog */}
+      <ServiceAliasForm
+        service={selectedService}
+        alias={editingAlias}
+        userPlatforms={userPlatforms}
+        onSubmit={editingAlias ? handleUpdateAlias : handleCreateAlias}
+        onCancel={() => {
+          setIsAliasDialogOpen(false);
+          setEditingAlias(null);
+        }}
+        isOpen={isAliasDialogOpen || !!editingAlias}
+      />
 
       {editingEpisode && (
         <Dialog open={!!editingEpisode} onOpenChange={() => setEditingEpisode(null)}>
