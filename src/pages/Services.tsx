@@ -508,9 +508,9 @@ const Services = () => {
                       <ChevronRight className="h-4 w-4" />
                     )}
                   </Button>
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <CardTitle className="text-lg">{service.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
                       slug: {service.slug} | 既定: {getPlatformLabel(service.default_platform)}
                     </p>
                   </div>
