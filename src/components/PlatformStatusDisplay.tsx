@@ -43,7 +43,7 @@ export const PlatformStatusDisplay = ({ episode, userPlatforms }: PlatformStatus
         return (
           <div
             key={platform.id}
-            className={`${isRegistered ? '' : 'text-muted-foreground'}`}
+            className={`${isRegistered ? '' : 'text-gray-400'}`}
             title={`${platform.platform_name}: ${isRegistered ? 'URL登録済み' : 'URL未登録'}`}
           >
             <PlatformIcon
