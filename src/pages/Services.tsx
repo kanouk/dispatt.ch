@@ -5,6 +5,7 @@ import { useEpisodes, useCreateEpisode, useUpdateEpisode, useDeleteEpisode } fro
 import { useUserPlatforms } from "@/hooks/useUserPlatforms";
 import { useServiceAliases, useCreateServiceAlias, useUpdateServiceAlias, useDeleteServiceAlias } from "@/hooks/useServiceAliases";
 import { ServiceAliasForm } from "@/components/ServiceAliasForm";
+import { PlatformStatusDisplay } from "@/components/PlatformStatusDisplay";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -637,7 +638,7 @@ const Services = () => {
                     <TableRow>
                       <TableHead>エピソード番号</TableHead>
                       <TableHead>タイトル</TableHead>
-                      <TableHead>既定プラットフォーム</TableHead>
+                      <TableHead>登録プラットフォーム</TableHead>
                       <TableHead>ステータス</TableHead>
                       <TableHead>公開日</TableHead>
                       <TableHead>アクション</TableHead>
@@ -657,7 +658,12 @@ const Services = () => {
                           </div>
                         </TableCell>
                         <TableCell>{episode.title || '無題'}</TableCell>
-                        <TableCell>{getPlatformLabel(episode.default_platform, episode.custom_platform_id)}</TableCell>
+                        <TableCell>
+                          <PlatformStatusDisplay 
+                            episode={episode} 
+                            userPlatforms={userPlatforms} 
+                          />
+                        </TableCell>
                         <TableCell>{getStatusBadge(episode.status)}</TableCell>
                         <TableCell>
                           {episode.published_at 
