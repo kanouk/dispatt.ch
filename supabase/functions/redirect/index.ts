@@ -266,8 +266,8 @@ Deno.serve(async (req) => {
             });
         }
       } else {
-        // Default platform
-        switch (episode.default_platform) {
+        // Default platform (use service default since episode no longer has its own)
+        switch (service.default_platform) {
           case 'NOTE':
             redirectUrl = episode.note_url || 
                          (episode.platform_urls && episode.platform_urls.note) || 

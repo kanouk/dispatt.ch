@@ -96,8 +96,6 @@ export type Database = {
           created_at: string
           custom_platform_id: string | null
           custom_url: string | null
-          default_platform: Database["public"]["Enums"]["app_platform"]
-          default_platform_id: string | null
           ep_no: number
           fallback_behavior: Database["public"]["Enums"]["fallback_behavior"]
           id: string
@@ -119,8 +117,6 @@ export type Database = {
           created_at?: string
           custom_platform_id?: string | null
           custom_url?: string | null
-          default_platform: Database["public"]["Enums"]["app_platform"]
-          default_platform_id?: string | null
           ep_no: number
           fallback_behavior?: Database["public"]["Enums"]["fallback_behavior"]
           id?: string
@@ -142,8 +138,6 @@ export type Database = {
           created_at?: string
           custom_platform_id?: string | null
           custom_url?: string | null
-          default_platform?: Database["public"]["Enums"]["app_platform"]
-          default_platform_id?: string | null
           ep_no?: number
           fallback_behavior?: Database["public"]["Enums"]["fallback_behavior"]
           id?: string
@@ -163,13 +157,6 @@ export type Database = {
           {
             foreignKeyName: "episodes_custom_platform_id_fkey"
             columns: ["custom_platform_id"]
-            isOneToOne: false
-            referencedRelation: "user_platforms"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "episodes_default_platform_id_fkey"
-            columns: ["default_platform_id"]
             isOneToOne: false
             referencedRelation: "user_platforms"
             referencedColumns: ["id"]

@@ -27,8 +27,6 @@ export interface Episode {
   ep_no: number;
   title?: string;
   alias?: string;
-  default_platform: AppPlatform;
-  default_platform_id?: string;
   platform_urls: any; // JSONB from Supabase
   // Legacy fields (will be removed after migration)
   note_url?: string;

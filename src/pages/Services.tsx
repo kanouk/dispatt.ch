@@ -944,7 +944,6 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
       ep_no: episode?.ep_no || 1,
       title: episode?.title || '',
       alias: episode?.alias || '',
-      default_platform: episode?.default_platform || service?.default_platform || 'NOTE' as AppPlatform,
       custom_url: episode?.custom_url || '',
       custom_platform_id: episode?.custom_platform_id || '',
       fallback_behavior: episode?.fallback_behavior || 'FALLBACK_TO_CHANNEL' as FallbackBehavior,
@@ -967,32 +966,11 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // カスタムプラットフォームのバリデーション
-    if (formData.default_platform === 'CUSTOM') {
-      if (!formData.custom_platform_id) {
-        toast({
-          title: "エラー",
-          description: "カスタムプラットフォームを選択してください",
-          variant: "destructive",
-        });
-        return;
-      }
-      if (!formData.custom_url.trim()) {
-        toast({
-          title: "エラー",
-          description: "カスタムURLは必須です",
-          variant: "destructive",
-        });
-        return;
-      }
-    }
-    
     // 空文字列をnullに変換
     const cleanedData: any = {
       ep_no: formData.ep_no,
       title: formData.title.trim() || null,
       alias: formData.alias.trim() || null,
-      default_platform: formData.default_platform,
       custom_url: formData.custom_url.trim() || null,
       custom_platform_id: formData.custom_platform_id || null,
       fallback_behavior: formData.fallback_behavior,
@@ -1069,86 +1047,6 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
         />
       </div>
 
-      <div>
-        <Label htmlFor="default_platform">デフォルトプラットフォーム</Label>
-        <Select value={formData.default_platform} onValueChange={(value) => {
-          setFormData(prev => ({ 
-            ...prev, 
-            default_platform: value as AppPlatform,
-            custom_platform_id: value === 'CUSTOM' ? '' : prev.custom_platform_id
-          }));
-        }}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {enabledPlatforms.map((platform) => {
-              const appPlatform = getAppPlatformFromSlug(platform.platform_slug);
-              if (appPlatform) {
-                return (
-                  <SelectItem key={platform.id} value={appPlatform}>
-                    <span className="flex items-center gap-2">
-                      <PlatformIcon 
-                        iconName={platform.platform_icon || 'FaGlobe'} 
-                        size={16} 
-                        color={platform.platform_color || '#6B7280'}
-                      />
-                      {platform.platform_name}
-                    </span>
-                  </SelectItem>
-                );
-              }
-              return (
-                <SelectItem key={platform.id} value="CUSTOM">
-                  <span className="flex items-center gap-2">
-                    <PlatformIcon 
-                      iconName={platform.platform_icon || 'FaGlobe'} 
-                      size={16} 
-                      color={platform.platform_color || '#6B7280'}
-                    />
-                    {platform.platform_name}
-                  </span>
-                </SelectItem>
-              );
-            })}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {formData.default_platform === 'CUSTOM' && (
-        <div>
-          <Label htmlFor="custom_platform_id">カスタムプラットフォーム</Label>
-          <Select value={formData.custom_platform_id} onValueChange={(value) => {
-            const selectedPlatform = userPlatforms.find(p => p.id === value);
-            setFormData(prev => ({ 
-              ...prev, 
-              custom_platform_id: value,
-              custom_url: selectedPlatform?.url_template ? 
-                selectedPlatform.url_template.replace('{username}', '').replace('{show_id}', '') : 
-                prev.custom_url
-            }));
-          }}>
-            <SelectTrigger>
-              <SelectValue placeholder="カスタムプラットフォームを選択" />
-            </SelectTrigger>
-            <SelectContent>
-              {userPlatforms.map((platform) => (
-                <SelectItem key={platform.id} value={platform.id}>
-                  <span className="flex items-center gap-2">
-                    <PlatformIcon 
-                      iconName={platform.platform_icon || 'FaGlobe'} 
-                      size={16} 
-                      color={platform.platform_color || '#6B7280'}
-                    />
-                    {platform.platform_name}
-                  </span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
-
       <div className="space-y-3">
         <Label>プラットフォーム別URL</Label>
         
@@ -1177,28 +1075,6 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
             </div>
           );
         })}
-        
-        {formData.default_platform === 'CUSTOM' && (
-          <div>
-            <Label htmlFor="custom_url" className="text-sm text-muted-foreground">
-              カスタム URL
-              {formData.custom_platform_id && (() => {
-                const platform = userPlatforms.find(p => p.id === formData.custom_platform_id);
-                return platform?.url_template ? (
-                  <span className="text-xs text-muted-foreground ml-2">
-                    (テンプレート: {platform.url_template})
-                  </span>
-                ) : null;
-              })()}
-            </Label>
-            <Input
-              id="custom_url"
-              value={formData.custom_url}
-              onChange={(e) => setFormData(prev => ({ ...prev, custom_url: e.target.value }))}
-              placeholder="https://..."
-            />
-          </div>
-        )}
       </div>
 
       <div>
