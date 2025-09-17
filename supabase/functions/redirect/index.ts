@@ -221,18 +221,42 @@ Deno.serve(async (req) => {
         // Specific variant requested
         switch (variant.toLowerCase()) {
           case 'note':
-            redirectUrl = episode.note_url || service.note_home_url;
+            redirectUrl = episode.note_url || 
+                         (episode.platform_urls && episode.platform_urls.note) || 
+                         (service.platform_urls && service.platform_urls.note) ||
+                         service.note_home_url;
             break;
           case 'yt':
           case 'youtube':
-            redirectUrl = episode.youtube_url || service.youtube_channel_url;
+            redirectUrl = episode.youtube_url || 
+                         (episode.platform_urls && episode.platform_urls.youtube) || 
+                         (service.platform_urls && service.platform_urls.youtube) ||
+                         service.youtube_channel_url;
             actualVariant = 'yt';
             break;
           case 'spotify':
-            redirectUrl = episode.spotify_url || service.spotify_show_url;
+            redirectUrl = episode.spotify_url || 
+                         (episode.platform_urls && episode.platform_urls.spotify) || 
+                         (service.platform_urls && service.platform_urls.spotify) ||
+                         service.spotify_show_url;
             break;
           case 'instagram':
-            redirectUrl = episode.instagram_url || service.instagram_profile_url;
+            redirectUrl = episode.instagram_url || 
+                         (episode.platform_urls && episode.platform_urls.instagram) || 
+                         (service.platform_urls && service.platform_urls.instagram) ||
+                         service.instagram_profile_url;
+            break;
+          case 'applepodcasts':
+          case 'apple':
+            redirectUrl = episode.apple_podcasts_url || 
+                         (episode.platform_urls && episode.platform_urls.applepodcasts) || 
+                         (service.platform_urls && service.platform_urls.applepodcasts) ||
+                         service.apple_podcasts_url;
+            break;
+          case 'tiktok':
+            redirectUrl = (episode.platform_urls && episode.platform_urls.tiktok) || 
+                         (service.platform_urls && service.platform_urls.tiktok) ||
+                         service.tiktok_profile_url;
             break;
           default:
             console.log('Invalid variant:', variant);
@@ -245,19 +269,43 @@ Deno.serve(async (req) => {
         // Default platform
         switch (episode.default_platform) {
           case 'NOTE':
-            redirectUrl = episode.note_url || service.note_home_url;
+            redirectUrl = episode.note_url || 
+                         (episode.platform_urls && episode.platform_urls.note) || 
+                         (service.platform_urls && service.platform_urls.note) ||
+                         service.note_home_url;
             break;
           case 'YOUTUBE':
-            redirectUrl = episode.youtube_url || service.youtube_channel_url;
+            redirectUrl = episode.youtube_url || 
+                         (episode.platform_urls && episode.platform_urls.youtube) || 
+                         (service.platform_urls && service.platform_urls.youtube) ||
+                         service.youtube_channel_url;
             break;
           case 'SPOTIFY':
-            redirectUrl = episode.spotify_url || service.spotify_show_url;
+            redirectUrl = episode.spotify_url || 
+                         (episode.platform_urls && episode.platform_urls.spotify) || 
+                         (service.platform_urls && service.platform_urls.spotify) ||
+                         service.spotify_show_url;
             break;
           case 'INSTAGRAM':
-            redirectUrl = episode.instagram_url || service.instagram_profile_url;
+            redirectUrl = episode.instagram_url || 
+                         (episode.platform_urls && episode.platform_urls.instagram) || 
+                         (service.platform_urls && service.platform_urls.instagram) ||
+                         service.instagram_profile_url;
+            break;
+          case 'APPLEPODCASTS':
+            redirectUrl = episode.apple_podcasts_url || 
+                         (episode.platform_urls && episode.platform_urls.applepodcasts) || 
+                         (service.platform_urls && service.platform_urls.applepodcasts) ||
+                         service.apple_podcasts_url;
+            break;
+          case 'TIKTOK':
+            redirectUrl = (episode.platform_urls && episode.platform_urls.tiktok) || 
+                         (service.platform_urls && service.platform_urls.tiktok) ||
+                         service.tiktok_profile_url;
             break;
           case 'CUSTOM':
-            redirectUrl = episode.custom_url;
+            redirectUrl = episode.custom_url ||
+                         (episode.platform_urls && episode.platform_urls.custom);
             break;
         }
       }
@@ -312,18 +360,31 @@ Deno.serve(async (req) => {
       if (variant) {
         switch (variant.toLowerCase()) {
           case 'note':
-            redirectUrl = service.note_home_url;
+            redirectUrl = (service.platform_urls && service.platform_urls.note) ||
+                         service.note_home_url;
             break;
           case 'yt':
           case 'youtube':
-            redirectUrl = service.youtube_channel_url;
+            redirectUrl = (service.platform_urls && service.platform_urls.youtube) ||
+                         service.youtube_channel_url;
             actualVariant = 'yt';
             break;
           case 'spotify':
-            redirectUrl = service.spotify_show_url;
+            redirectUrl = (service.platform_urls && service.platform_urls.spotify) ||
+                         service.spotify_show_url;
             break;
           case 'instagram':
-            redirectUrl = service.instagram_profile_url;
+            redirectUrl = (service.platform_urls && service.platform_urls.instagram) ||
+                         service.instagram_profile_url;
+            break;
+          case 'applepodcasts':
+          case 'apple':
+            redirectUrl = (service.platform_urls && service.platform_urls.applepodcasts) ||
+                         service.apple_podcasts_url;
+            break;
+          case 'tiktok':
+            redirectUrl = (service.platform_urls && service.platform_urls.tiktok) ||
+                         service.tiktok_profile_url;
             break;
           default:
             return new Response('Not Found', { 
@@ -335,16 +396,28 @@ Deno.serve(async (req) => {
         // Use service default platform
         switch (service.default_platform) {
           case 'NOTE':
-            redirectUrl = service.note_home_url;
+            redirectUrl = (service.platform_urls && service.platform_urls.note) ||
+                         service.note_home_url;
             break;
           case 'YOUTUBE':
-            redirectUrl = service.youtube_channel_url;
+            redirectUrl = (service.platform_urls && service.platform_urls.youtube) ||
+                         service.youtube_channel_url;
             break;
           case 'SPOTIFY':
-            redirectUrl = service.spotify_show_url;
+            redirectUrl = (service.platform_urls && service.platform_urls.spotify) ||
+                         service.spotify_show_url;
             break;
           case 'INSTAGRAM':
-            redirectUrl = service.instagram_profile_url;
+            redirectUrl = (service.platform_urls && service.platform_urls.instagram) ||
+                         service.instagram_profile_url;
+            break;
+          case 'APPLEPODCASTS':
+            redirectUrl = (service.platform_urls && service.platform_urls.applepodcasts) ||
+                         service.apple_podcasts_url;
+            break;
+          case 'TIKTOK':
+            redirectUrl = (service.platform_urls && service.platform_urls.tiktok) ||
+                         service.tiktok_profile_url;
             break;
         }
       }
