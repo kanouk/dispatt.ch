@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Check, X, Search, ExternalLink, Copy, ChevronRight, ChevronDown } from "lucide-react";
 import { getPublicUrl } from "@/utils/url";
 import { PlatformIcon } from "@/components/ui/platform-icon";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Service, Episode, AppPlatform, EpisodeStatus, FallbackBehavior, UserPlatform, ServiceAlias } from "@/types/database";
 
 const Services = () => {
@@ -1050,31 +1051,36 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
       <div className="space-y-3">
         <Label>プラットフォーム別URL</Label>
         
-        {enabledPlatforms.map((platform) => {
-          const urlField = `${platform.platform_slug}_url`;
-          const urlValue = (formData as any)[urlField] || '';
-          
-          return (
-            <div key={platform.id}>
-              <Label htmlFor={urlField} className="text-sm text-muted-foreground">
-                <span className="flex items-center gap-2">
-                  <PlatformIcon 
-                    iconName={platform.platform_icon || 'FaGlobe'} 
-                    size={16} 
-                    color={platform.platform_color || '#6B7280'}
+        <ScrollArea className="h-64 pr-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {enabledPlatforms.map((platform) => {
+              const urlField = `${platform.platform_slug}_url`;
+              const urlValue = (formData as any)[urlField] || '';
+              
+              return (
+                <div key={platform.id} className="space-y-2">
+                  <Label htmlFor={urlField} className="text-sm text-muted-foreground">
+                    <span className="flex items-center gap-2">
+                      <PlatformIcon 
+                        iconName={platform.platform_icon || 'FaGlobe'} 
+                        size={16} 
+                        color={platform.platform_color || '#6B7280'}
+                      />
+                      {platform.platform_name}
+                    </span>
+                  </Label>
+                  <Input
+                    id={urlField}
+                    value={urlValue}
+                    onChange={(e) => setFormData(prev => ({ ...prev, [urlField]: e.target.value }))}
+                    placeholder={platform.url_template || `https://${platform.platform_slug}.com/...`}
+                    className="w-full"
                   />
-                  {platform.platform_name} URL
-                </span>
-              </Label>
-              <Input
-                id={urlField}
-                value={urlValue}
-                onChange={(e) => setFormData(prev => ({ ...prev, [urlField]: e.target.value }))}
-                placeholder={platform.url_template || `https://${platform.platform_slug}.com/...`}
-              />
-            </div>
-          );
-        })}
+                </div>
+              );
+            })}
+          </div>
+        </ScrollArea>
       </div>
 
       <div>
