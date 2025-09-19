@@ -15,6 +15,7 @@ const Redirect: React.FC = () => {
   const location = useLocation();
   const [serviceName, setServiceName] = useState<string>('');
   const [episodeTitle, setEpisodeTitle] = useState<string>('');
+  const [actualEpisodeNumber, setActualEpisodeNumber] = useState<number | null>(null);
 
   // プラットフォーム名の日本語変換
   const getPlatformName = (platform?: string) => {
@@ -59,7 +60,9 @@ const Redirect: React.FC = () => {
   };
 
   const platformName = getPlatformName(variant);
-  const episodeNumber = epNo ? `第${epNo}話` : 'エピソード';
+  const episodeNumber = actualEpisodeNumber 
+    ? `第${actualEpisodeNumber}話` 
+    : (epNo && /^\d+$/.test(epNo) ? `第${epNo}話` : 'エピソード');
 
   useEffect(() => {
     const fetchServiceInfo = async () => {
@@ -76,19 +79,37 @@ const Redirect: React.FC = () => {
         } else {
           setServiceName(serviceData[0].name);
           
-          // Get episode info if needed (this still requires authentication for user's own episodes)
+          // Get episode info if needed
           if (epNo) {
+            // Check if epNo is a number or an alias
+            const isNumeric = /^\d+$/.test(epNo);
+            
             // Only fetch episode data for authenticated users viewing their own content
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-              const { data: episodeData } = await supabase
-                .from('episodes')
-                .select('title')
-                .eq('ep_no', parseInt(epNo))
-                .single();
+              let episodeData;
+              
+              if (isNumeric) {
+                // epNo is a number, query by ep_no
+                const { data } = await supabase
+                  .from('episodes')
+                  .select('title, ep_no')
+                  .eq('ep_no', parseInt(epNo))
+                  .maybeSingle();
+                episodeData = data;
+              } else {
+                // epNo is an alias, query by alias
+                const { data } = await supabase
+                  .from('episodes')
+                  .select('title, ep_no')
+                  .eq('alias', epNo)
+                  .maybeSingle();
+                episodeData = data;
+              }
                 
-              if (episodeData?.title) {
-                setEpisodeTitle(episodeData.title);
+              if (episodeData) {
+                setEpisodeTitle(episodeData.title || '');
+                setActualEpisodeNumber(episodeData.ep_no);
               }
             }
           }
