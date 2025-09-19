@@ -127,7 +127,7 @@ const Analytics = () => {
             <CardTitle>フィルター</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
               <div>
                 <Label htmlFor="service-select">サービス</Label>
                 <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
@@ -169,8 +169,10 @@ const Analytics = () => {
                   onDateChange={setDateRange}
                 />
               </div>
-
-              <div className="flex items-center space-x-2 pt-6">
+            </div>
+            
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-2">
                 <Switch
                   id="exclude-bots"
                   checked={excludeBots}
