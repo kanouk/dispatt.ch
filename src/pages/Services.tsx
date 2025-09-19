@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
@@ -994,35 +995,38 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="ep_no">エピソード番号</Label>
-          <Input
-            id="ep_no"
-            type="number"
-            min="1"
-            value={formData.ep_no}
-            onChange={(e) => setFormData(prev => ({ ...prev, ep_no: parseInt(e.target.value) }))}
-            required
-          />
-        </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Basic Information - Always Visible */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium">基本情報</h3>
         
-        <div>
-          <Label htmlFor="alias">エイリアス（オプション）</Label>
-          <Input
-            id="alias"
-            value={formData.alias}
-            onChange={(e) => setFormData(prev => ({ ...prev, alias: e.target.value }))}
-            placeholder="例: chanelno5"
-          />
-          <p className="text-sm text-muted-foreground mt-1">
-            英数字とハイフンのみ。URLで使用されます
-          </p>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="ep_no">エピソード番号</Label>
+            <Input
+              id="ep_no"
+              type="number"
+              min="1"
+              value={formData.ep_no}
+              onChange={(e) => setFormData(prev => ({ ...prev, ep_no: parseInt(e.target.value) }))}
+              required
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="alias">エイリアス（オプション）</Label>
+            <Input
+              id="alias"
+              value={formData.alias}
+              onChange={(e) => setFormData(prev => ({ ...prev, alias: e.target.value }))}
+              placeholder="例: chanelno5"
+            />
+            <p className="text-sm text-muted-foreground mt-1">
+              英数字とハイフンのみ。URLで使用されます
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="status">ステータス</Label>
           <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({ ...prev, status: value as EpisodeStatus }))}>
@@ -1036,65 +1040,82 @@ const EpisodeForm = ({ service, episode, userPlatforms = [], onSubmit, onCancel 
             </SelectContent>
           </Select>
         </div>
+
+        <div>
+          <Label htmlFor="title">タイトル</Label>
+          <Input
+            id="title"
+            value={formData.title}
+            onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+            placeholder="エピソードのタイトル"
+          />
+        </div>
       </div>
 
-      <div>
-        <Label htmlFor="title">タイトル</Label>
-        <Input
-          id="title"
-          value={formData.title}
-          onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-          placeholder="エピソードのタイトル"
-        />
-      </div>
-
-      <div className="space-y-3">
-        <Label>プラットフォーム別URL</Label>
-        
-        <ScrollArea className="h-64 pr-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {enabledPlatforms.map((platform) => {
-              const urlField = `${platform.platform_slug}_url`;
-              const urlValue = (formData as any)[urlField] || '';
-              
-              return (
-                <div key={platform.id} className="space-y-2">
-                  <Label htmlFor={urlField} className="text-sm text-muted-foreground">
-                    <span className="flex items-center gap-2">
-                      <PlatformIcon 
-                        iconName={platform.platform_icon || 'FaGlobe'} 
-                        size={16} 
-                        color={platform.platform_color || '#6B7280'}
+      {/* Accordion Sections */}
+      <Accordion type="multiple" defaultValue={["platform-urls"]} className="w-full">
+        {/* Platform URLs Section */}
+        <AccordionItem value="platform-urls">
+          <AccordionTrigger>
+            プラットフォームURL ({enabledPlatforms.length}個)
+          </AccordionTrigger>
+          <AccordionContent>
+            <ScrollArea className="h-48 pr-4">
+              <div className="grid grid-cols-1 gap-4">
+                {enabledPlatforms.map((platform) => {
+                  const urlField = `${platform.platform_slug}_url`;
+                  const urlValue = (formData as any)[urlField] || '';
+                  
+                  return (
+                    <div key={platform.id} className="space-y-2">
+                      <Label htmlFor={urlField} className="text-sm text-muted-foreground">
+                        <span className="flex items-center gap-2">
+                          <PlatformIcon 
+                            iconName={platform.platform_icon || 'FaGlobe'} 
+                            size={16} 
+                            color={platform.platform_color || '#6B7280'}
+                          />
+                          {platform.platform_name}
+                        </span>
+                      </Label>
+                      <Input
+                        id={urlField}
+                        value={urlValue}
+                        onChange={(e) => setFormData(prev => ({ ...prev, [urlField]: e.target.value }))}
+                        placeholder={platform.url_template || `https://${platform.platform_slug}.com/...`}
+                        className="w-full"
                       />
-                      {platform.platform_name}
-                    </span>
-                  </Label>
-                  <Input
-                    id={urlField}
-                    value={urlValue}
-                    onChange={(e) => setFormData(prev => ({ ...prev, [urlField]: e.target.value }))}
-                    placeholder={platform.url_template || `https://${platform.platform_slug}.com/...`}
-                    className="w-full"
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </ScrollArea>
-      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+          </AccordionContent>
+        </AccordionItem>
 
-      <div>
-        <Label htmlFor="fallback_behavior">フォールバック動作</Label>
-        <Select value={formData.fallback_behavior} onValueChange={(value) => setFormData(prev => ({ ...prev, fallback_behavior: value as FallbackBehavior }))}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="FALLBACK_TO_CHANNEL">チャンネルトップへ</SelectItem>
-            <SelectItem value="COMING_SOON">カミングスーン</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+        {/* Advanced Settings Section */}
+        <AccordionItem value="advanced-settings">
+          <AccordionTrigger>
+            詳細設定
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="fallback_behavior">フォールバック動作</Label>
+                <Select value={formData.fallback_behavior} onValueChange={(value) => setFormData(prev => ({ ...prev, fallback_behavior: value as FallbackBehavior }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="FALLBACK_TO_CHANNEL">チャンネルトップへ</SelectItem>
+                    <SelectItem value="COMING_SOON">カミングスーン</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       <div className="flex justify-end space-x-2">
         <Button type="button" variant="outline" onClick={onCancel}>
