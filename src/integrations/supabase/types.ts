@@ -347,10 +347,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      create_default_user_platforms: {
-        Args: Record<PropertyKey, never> | { target_user_id: string }
-        Returns: undefined
-      }
+      create_default_user_platforms:
+        | { Args: never; Returns: undefined }
+        | { Args: { target_user_id: string }; Returns: undefined }
       get_default_platform_id: {
         Args: {
           platform_enum: Database["public"]["Enums"]["app_platform"]
@@ -394,10 +393,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       app_platform:
