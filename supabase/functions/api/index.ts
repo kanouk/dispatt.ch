@@ -95,13 +95,19 @@ Deno.serve(async (req) => {
   try {
     if (resource === "services") {
       return await handleServices(supabase, method, id, userId, req, url);
+    } else if (resource === "lookup" && secondLast === "episodes") {
+      return await handleEpisodeLookup(supabase, userId, url);
     } else if (resource === "episodes") {
       return await handleEpisodes(supabase, method, id, userId, req, url);
     } else {
       return json(
         {
           error: "Not found",
-          available_endpoints: ["/services", "/services/:id", "/episodes", "/episodes/:id"],
+          available_endpoints: [
+            "/services", "/services/:id",
+            "/episodes", "/episodes/:id",
+            "/episodes/lookup?service_slug=xxx&ep_no=1,2,3",
+          ],
         },
         404
       );
