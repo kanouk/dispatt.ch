@@ -54,24 +54,18 @@ async function authenticate(req: Request): Promise<string | Response> {
   return data.user_id as string;
 }
 
-function parseRoute(pathname: string): { resource: string; id?: string } {
-  // pathname like /api/v1/xxx/services/uuid
+function parseRoute(pathname: string): { resource: string; id?: string; secondLast: string } {
   const parts = pathname.split("/").filter(Boolean);
-  // Find resource name after the function path
-  // Edge function URL: /api/{resource} or /api/{resource}/{id}
-  // But actual pathname may be /api/v1/xxx/api/{resource}
-  // Let's just take last 1-2 segments
   const resource = parts.length >= 1 ? parts[parts.length - 1] : "";
   const secondLast = parts.length >= 2 ? parts[parts.length - 2] : "";
 
-  // Check if last segment is a UUID (id)
   const uuidRegex =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
   if (uuidRegex.test(resource)) {
-    return { resource: secondLast, id: resource };
+    return { resource: secondLast, id: resource, secondLast: parts.length >= 3 ? parts[parts.length - 3] : "" };
   }
-  return { resource };
+  return { resource, secondLast };
 }
 
 Deno.serve(async (req) => {
@@ -89,19 +83,25 @@ Deno.serve(async (req) => {
   );
 
   const url = new URL(req.url);
-  const { resource, id } = parseRoute(url.pathname);
+  const { resource, id, secondLast } = parseRoute(url.pathname);
   const method = req.method;
 
   try {
     if (resource === "services") {
       return await handleServices(supabase, method, id, userId, req, url);
+    } else if (resource === "lookup" && secondLast === "episodes") {
+      return await handleEpisodeLookup(supabase, userId, url);
     } else if (resource === "episodes") {
       return await handleEpisodes(supabase, method, id, userId, req, url);
     } else {
       return json(
         {
           error: "Not found",
-          available_endpoints: ["/services", "/services/:id", "/episodes", "/episodes/:id"],
+          available_endpoints: [
+            "/services", "/services/:id",
+            "/episodes", "/episodes/:id",
+            "/episodes/lookup?service_slug=xxx&ep_no=1,2,3",
+          ],
         },
         404
       );
@@ -273,4 +273,54 @@ async function handleEpisodes(
     default:
       return json({ error: "Method not allowed" }, 405);
   }
+}
+
+async function handleEpisodeLookup(
+  supabase: any,
+  userId: string,
+  url: URL
+) {
+  const serviceSlug = url.searchParams.get("service_slug");
+  const epNoParam = url.searchParams.get("ep_no");
+
+  if (!serviceSlug || !epNoParam) {
+    return json({ error: "service_slug and ep_no are required" }, 400);
+  }
+
+  // Resolve service by slug
+  const { data: svc } = await supabase
+    .from("services")
+    .select("id")
+    .eq("slug", serviceSlug)
+    .eq("user_id", userId)
+    .single();
+
+  if (!svc) return json({ error: "Service not found" }, 404);
+
+  // Parse ep_no (supports comma-separated: "1,2,3")
+  const epNos = epNoParam.split(",").map((n) => parseInt(n.trim(), 10)).filter((n) => !isNaN(n));
+  if (epNos.length === 0) return json({ error: "Invalid ep_no" }, 400);
+
+  if (epNos.length === 1) {
+    const { data, error } = await supabase
+      .from("episodes")
+      .select("*")
+      .eq("service_id", svc.id)
+      .eq("user_id", userId)
+      .eq("ep_no", epNos[0])
+      .single();
+    if (error) return json({ error: "Episode not found" }, 404);
+    return json({ data });
+  }
+
+  // Multiple ep_nos
+  const { data, error } = await supabase
+    .from("episodes")
+    .select("*")
+    .eq("service_id", svc.id)
+    .eq("user_id", userId)
+    .in("ep_no", epNos)
+    .order("ep_no");
+  if (error) return json({ error: error.message }, 500);
+  return json({ data });
 }
