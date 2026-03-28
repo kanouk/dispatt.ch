@@ -274,3 +274,53 @@ async function handleEpisodes(
       return json({ error: "Method not allowed" }, 405);
   }
 }
+
+async function handleEpisodeLookup(
+  supabase: any,
+  userId: string,
+  url: URL
+) {
+  const serviceSlug = url.searchParams.get("service_slug");
+  const epNoParam = url.searchParams.get("ep_no");
+
+  if (!serviceSlug || !epNoParam) {
+    return json({ error: "service_slug and ep_no are required" }, 400);
+  }
+
+  // Resolve service by slug
+  const { data: svc } = await supabase
+    .from("services")
+    .select("id")
+    .eq("slug", serviceSlug)
+    .eq("user_id", userId)
+    .single();
+
+  if (!svc) return json({ error: "Service not found" }, 404);
+
+  // Parse ep_no (supports comma-separated: "1,2,3")
+  const epNos = epNoParam.split(",").map((n) => parseInt(n.trim(), 10)).filter((n) => !isNaN(n));
+  if (epNos.length === 0) return json({ error: "Invalid ep_no" }, 400);
+
+  if (epNos.length === 1) {
+    const { data, error } = await supabase
+      .from("episodes")
+      .select("*")
+      .eq("service_id", svc.id)
+      .eq("user_id", userId)
+      .eq("ep_no", epNos[0])
+      .single();
+    if (error) return json({ error: "Episode not found" }, 404);
+    return json({ data });
+  }
+
+  // Multiple ep_nos
+  const { data, error } = await supabase
+    .from("episodes")
+    .select("*")
+    .eq("service_id", svc.id)
+    .eq("user_id", userId)
+    .in("ep_no", epNos)
+    .order("ep_no");
+  if (error) return json({ error: error.message }, 500);
+  return json({ data });
+}
