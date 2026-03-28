@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
   );
 
   const url = new URL(req.url);
-  const { resource, id } = parseRoute(url.pathname);
+  const { resource, id, secondLast } = parseRoute(url.pathname);
   const method = req.method;
 
   try {
