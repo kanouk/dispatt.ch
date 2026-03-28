@@ -54,24 +54,18 @@ async function authenticate(req: Request): Promise<string | Response> {
   return data.user_id as string;
 }
 
-function parseRoute(pathname: string): { resource: string; id?: string } {
-  // pathname like /api/v1/xxx/services/uuid
+function parseRoute(pathname: string): { resource: string; id?: string; secondLast: string } {
   const parts = pathname.split("/").filter(Boolean);
-  // Find resource name after the function path
-  // Edge function URL: /api/{resource} or /api/{resource}/{id}
-  // But actual pathname may be /api/v1/xxx/api/{resource}
-  // Let's just take last 1-2 segments
   const resource = parts.length >= 1 ? parts[parts.length - 1] : "";
   const secondLast = parts.length >= 2 ? parts[parts.length - 2] : "";
 
-  // Check if last segment is a UUID (id)
   const uuidRegex =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
   if (uuidRegex.test(resource)) {
-    return { resource: secondLast, id: resource };
+    return { resource: secondLast, id: resource, secondLast: parts.length >= 3 ? parts[parts.length - 3] : "" };
   }
-  return { resource };
+  return { resource, secondLast };
 }
 
 Deno.serve(async (req) => {
