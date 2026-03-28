@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_keys: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          key_hash: string
+          last_used_at: string | null
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          key_hash: string
+          last_used_at?: string | null
+          name?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          key_hash?: string
+          last_used_at?: string | null
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       clicks: {
         Row: {
           created_at: string
@@ -347,10 +380,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      create_default_user_platforms: {
-        Args: Record<PropertyKey, never> | { target_user_id: string }
-        Returns: undefined
-      }
+      create_default_user_platforms:
+        | { Args: never; Returns: undefined }
+        | { Args: { target_user_id: string }; Returns: undefined }
       get_default_platform_id: {
         Args: {
           platform_enum: Database["public"]["Enums"]["app_platform"]
@@ -394,10 +426,8 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_admin: { Args: never; Returns: boolean }
+      validate_api_key: { Args: { key_hash_input: string }; Returns: string }
     }
     Enums: {
       app_platform:

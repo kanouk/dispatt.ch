@@ -12,6 +12,7 @@ import Admin from "./pages/Admin";
 import Services from "./pages/Services";
 import Platforms from "./pages/Platforms";
 import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
 import Forbidden from "./pages/Forbidden";
 import Health from "./pages/Health";
 import NotFound from "./pages/NotFound";
@@ -64,6 +65,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Analytics />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/settings" 
+            element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             } 
           />

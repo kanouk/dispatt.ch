@@ -9,6 +9,7 @@ export const Sidebar = () => {
     { path: '/services', label: 'サービス・エピソード', icon: '🎬' },
     { path: '/platforms', label: 'プラットフォーム管理', icon: '⚙️' },
     { path: '/analytics', label: '分析', icon: '📊' },
+    { path: '/settings', label: '設定', icon: '🔑' },
   ];
 
   return (
