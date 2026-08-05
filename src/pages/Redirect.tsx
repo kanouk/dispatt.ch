@@ -126,6 +126,19 @@ const Redirect: React.FC = () => {
   useEffect(() => {
     if (!service || !epNo) return;
 
+    // 香水ラジオの番号URLはブラウザ内の案内画面を挟まず、正本側の
+    // 固定URLへ直接送る。aliasはEdge Functionでepisode番号に解決する。
+    if (service === 'perfume' && /^\d+$/.test(epNo)) {
+      const normalizedVariant = variant === 'yt' ? 'youtube' : variant;
+      if (!normalizedVariant || ['youtube', 'spotify', 'note'].includes(normalizedVariant)) {
+        const target = normalizedVariant
+          ? `https://perfume-radio.jp/episodes/${epNo}/${normalizedVariant}`
+          : `https://perfume-radio.jp/episodes/${epNo}`;
+        window.location.replace(target);
+        return;
+      }
+    }
+
     const path = variant
       ? `/${service}/ep/${epNo}/${variant}`
       : `/${service}/ep/${epNo}`;
@@ -138,10 +151,10 @@ const Redirect: React.FC = () => {
       if (!url.searchParams.has(k)) url.searchParams.set(k, v);
     });
 
-    // 短い遅延後にリダイレクト（情報を表示するため）
-    const timer = setTimeout(() => {
+    // aliasや他サービスも待機画面を意図的に遅延させない。
+    const timer = window.setTimeout(() => {
       window.location.replace(url.toString());
-    }, 3000);
+    }, 0);
 
     return () => clearTimeout(timer);
   }, [service, epNo, variant, location.search]);

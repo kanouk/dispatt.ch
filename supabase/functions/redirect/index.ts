@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { perfumeRadioEpisodeTarget } from './perfume-radio.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -216,8 +217,21 @@ Deno.serve(async (req) => {
     let actualVariant = variant || 'default';
 
     if (episode) {
+      // perfume の既存 dispatt URL は互換入口として残し、正本を持つ
+      // perfume-radio.jp の固定URLへ集約する。aliasも解決済みep_noを使うため、
+      // 香水名と数字aliasの曖昧さを下流へ持ち込まない。
+      const perfumeRadioTarget = perfumeRadioEpisodeTarget(
+        service.slug,
+        epNo || episode.ep_no || null,
+        variant,
+      );
+      if (perfumeRadioTarget) {
+        redirectUrl = perfumeRadioTarget.url;
+        actualVariant = perfumeRadioTarget.variant;
+      }
+
       // Episode exists, determine redirect URL
-      if (variant) {
+      if (!redirectUrl && variant) {
         // Specific variant requested
         switch (variant.toLowerCase()) {
           case 'note':
@@ -265,7 +279,7 @@ Deno.serve(async (req) => {
               headers: { ...corsHeaders, 'X-Robots-Tag': 'noindex' }
             });
         }
-      } else {
+      } else if (!redirectUrl) {
         // Default platform (use service default since episode no longer has its own)
         switch (service.default_platform) {
           case 'NOTE':
