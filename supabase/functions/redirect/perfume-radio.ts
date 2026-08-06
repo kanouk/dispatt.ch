@@ -18,6 +18,6 @@ export function perfumeRadioEpisodeTarget(
   if (!variant) return { url: base, variant: 'episode' }
 
   const normalized = variant.toLowerCase() === 'yt' ? 'youtube' : variant.toLowerCase()
-  if (!['youtube', 'spotify', 'note'].includes(normalized)) return null
+  if (!['youtube', 'spotify', 'note', 'instagram', 'tiktok'].includes(normalized)) return null
   return { url: `${base}/${normalized}`, variant: normalized }
 }
