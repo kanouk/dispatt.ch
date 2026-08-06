@@ -130,7 +130,7 @@ const Redirect: React.FC = () => {
     // 固定URLへ直接送る。aliasはEdge Functionでepisode番号に解決する。
     if (service === 'perfume' && /^\d+$/.test(epNo)) {
       const normalizedVariant = variant === 'yt' ? 'youtube' : variant;
-      if (!normalizedVariant || ['youtube', 'spotify', 'note'].includes(normalizedVariant)) {
+      if (!normalizedVariant || ['youtube', 'spotify', 'note', 'instagram', 'tiktok'].includes(normalizedVariant)) {
         const target = normalizedVariant
           ? `https://perfume-radio.jp/episodes/${epNo}/${normalizedVariant}`
           : `https://perfume-radio.jp/episodes/${epNo}`;
